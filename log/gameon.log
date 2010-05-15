@@ -325,3 +325,194 @@ May 10 16:28:11 GAMEON [info] select s.*,u.userName from go_gamesSubscribers s L
 May 10 16:28:18 GAMEON [info] select g.userName,s.* from go_user g, go_userSettings s where g.userID='1' and g.userID=s.userID 
 May 10 16:28:18 GAMEON [info] select * from go_games where createdByUserID='1' Limit 0,100
 May 10 16:28:18 GAMEON [info] select g.* from go_games g, go_gamesSubscribers s where s.userID='1' and s.gameID = g.gameID Limit 0,100
+May 11 13:33:28 GAMEON [info] select g.userName,s.* from go_user g, go_userSettings s where g.userName='jittrdev' and g.userID=s.userID 
+May 11 13:33:28 GAMEON [info] select g.userName,s.* from go_user g, go_userSettings s where g.userID='1' and g.userID=s.userID 
+May 11 13:33:29 GAMEON [info] select * from go_games where createdByUserID='1' Limit 0,100
+May 11 13:33:29 GAMEON [info] select g.* from go_games g, go_gamesSubscribers s where s.userID='1' and s.gameID = g.gameID Limit 0,100
+May 11 13:33:33 GAMEON [info] select g.*,t.typeName,s.sportName from go_games g LEFT JOIN go_types_lu t on g.type=t.id LEFT JOIN  go_sports_lu s on g.sport=s.id LEFT JOIN go_wagerTypes_lu w on g.wagerTypeID = w.id  where g.gameID='1273325871'
+May 11 13:33:33 GAMEON [debug] Array
+May 11 13:33:33 GAMEON [debug] http://jittr.com/jittr/gameon/go_getgamesubscribers.php?query=gamesubscribers&gameid=1273325871
+May 11 13:33:33 GAMEON [debug] GameID - 1273325871
+May 11 13:33:33 GAMEON [info] select s.*,u.userName from go_gamesSubscribers s LEFT JOIN go_user u on s.userID = u.userID  where s.gameID = '1273325871'  Limit 0,100
+May 11 16:10:23 GAMEON [info] select g.*,t.typeName,s.sportName from go_games g LEFT JOIN go_types_lu t on g.type=t.id LEFT JOIN  go_sports_lu s on g.sport=s.id LEFT JOIN go_wagerTypes_lu w on g.wagerTypeID = w.id  where g.gameID='1273325871'
+May 11 16:10:23 GAMEON [debug] Array
+May 11 16:10:23 GAMEON [debug] http://jittr.com/jittr/gameon/go_getgamesubscribers.php?query=gamesubscribers&gameid=1273325871
+May 11 16:10:24 GAMEON [debug] GameID - 1273325871
+May 11 16:10:24 GAMEON [info] select s.*,u.userName from go_gamesSubscribers s LEFT JOIN go_user u on s.userID = u.userID  where s.gameID = '1273325871'  Limit 0,100
+May 11 16:15:45 GAMEON [info] select g.userName,s.* from go_user g, go_userSettings s where g.userID='1' and g.userID=s.userID 
+May 11 16:15:45 GAMEON [info] select * from go_games where createdByUserID='1' Limit 0,100
+May 11 16:15:45 GAMEON [info] select g.* from go_games g, go_gamesSubscribers s where s.userID='1' and s.gameID = g.gameID Limit 0,100
+May 11 16:15:51 GAMEON [info] select g.*,t.typeName,s.sportName from go_games g LEFT JOIN go_types_lu t on g.type=t.id LEFT JOIN  go_sports_lu s on g.sport=s.id LEFT JOIN go_wagerTypes_lu w on g.wagerTypeID = w.id  where g.gameID='1273325897'
+May 11 16:15:51 GAMEON [debug] Array
+May 11 16:15:51 GAMEON [debug] http://jittr.com/jittr/gameon/go_getgamesubscribers.php?query=gamesubscribers&gameid=1273325897
+May 11 16:15:51 GAMEON [debug] GameID - 1273325897
+May 11 16:15:51 GAMEON [info] select s.*,u.userName from go_gamesSubscribers s LEFT JOIN go_user u on s.userID = u.userID  where s.gameID = '1273325897'  Limit 0,100
+May 11 16:16:00 GAMEON [info] select g.*,t.typeName,s.sportName from go_games g LEFT JOIN go_types_lu t on g.type=t.id LEFT JOIN  go_sports_lu s on g.sport=s.id LEFT JOIN go_wagerTypes_lu w on g.wagerTypeID = w.id  where g.gameID='1273325871'
+May 11 16:16:00 GAMEON [debug] Array
+May 11 16:16:00 GAMEON [debug] http://jittr.com/jittr/gameon/go_getgamesubscribers.php?query=gamesubscribers&gameid=1273325871
+May 11 16:16:00 GAMEON [debug] GameID - 1273325871
+May 11 16:16:00 GAMEON [info] select s.*,u.userName from go_gamesSubscribers s LEFT JOIN go_user u on s.userID = u.userID  where s.gameID = '1273325871'  Limit 0,100
+May 11 16:23:54 GAMEON [info] select g.userName,s.* from go_user g, go_userSettings s where g.userID='1' and g.userID=s.userID 
+May 11 16:23:55 GAMEON [info] select * from go_games where createdByUserID='1' Limit 0,100
+May 11 16:23:55 GAMEON [info] select g.* from go_games g, go_gamesSubscribers s where s.userID='1' and s.gameID = g.gameID Limit 0,100
+May 11 17:14:44 GAMEON [info] select g.userName,s.* from go_user g, go_userSettings s where g.userName='jittrdev' and g.userID=s.userID 
+May 11 17:14:44 GAMEON [info] select g.userName,s.* from go_user g, go_userSettings s where g.userID='1' and g.userID=s.userID 
+May 11 17:14:45 GAMEON [info] select * from go_games where createdByUserID='1' Limit 0,100
+May 11 17:14:45 GAMEON [info] select g.* from go_games g, go_gamesSubscribers s where s.userID='1' and s.gameID = g.gameID Limit 0,100
+May 11 17:14:59 GAMEON [info] insert into go_games (gameID,createdByUserID,createdByUserName,title,eventName,date,description,type,sport,subscriptionClose,wagerType,wagerUnits) values ('1273623299','1','jittrdev','shopon ','shopon ','','shopon ','0','0','','donuts','12')
+May 11 17:14:59 GAMEON [info] select g.userName,s.* from go_user g, go_userSettings s where g.userID='1' and g.userID=s.userID 
+May 11 17:14:59 GAMEON [info] select * from go_games where createdByUserID='1' Limit 0,100
+May 11 17:14:59 GAMEON [info] select g.* from go_games g, go_gamesSubscribers s where s.userID='1' and s.gameID = g.gameID Limit 0,100
+May 11 17:15:05 GAMEON [info] select g.*,t.typeName,s.sportName from go_games g LEFT JOIN go_types_lu t on g.type=t.id LEFT JOIN  go_sports_lu s on g.sport=s.id LEFT JOIN go_wagerTypes_lu w on g.wagerTypeID = w.id  where g.gameID='1273623299'
+May 11 17:15:05 GAMEON [debug] Array
+May 11 17:15:05 GAMEON [debug] http://jittr.com/jittr/gameon/go_getgamesubscribers.php?query=gamesubscribers&gameid=1273623299
+May 11 17:15:05 GAMEON [debug] GameID - 1273623299
+May 11 17:15:05 GAMEON [info] select s.*,u.userName from go_gamesSubscribers s LEFT JOIN go_user u on s.userID = u.userID  where s.gameID = '1273623299'  Limit 0,100
+May 11 17:26:08 GAMEON [info] select g.userName,s.* from go_user g, go_userSettings s where g.userID='1' and g.userID=s.userID 
+May 11 17:26:09 GAMEON [info] select * from go_games where createdByUserID='1' Limit 0,100
+May 11 17:26:09 GAMEON [info] select g.* from go_games g, go_gamesSubscribers s where s.userID='1' and s.gameID = g.gameID Limit 0,100
+May 11 17:27:12 GAMEON [info] select g.userName,s.* from go_user g, go_userSettings s where g.userID='1' and g.userID=s.userID 
+May 11 17:27:12 GAMEON [info] select * from go_games where createdByUserID='1' Limit 0,100
+May 11 17:27:12 GAMEON [info] select g.* from go_games g, go_gamesSubscribers s where s.userID='1' and s.gameID = g.gameID Limit 0,100
+May 11 17:27:51 GAMEON [info] select g.userName,s.* from go_user g, go_userSettings s where g.userID='1' and g.userID=s.userID 
+May 11 17:27:51 GAMEON [info] select * from go_games where createdByUserID='1' Limit 0,100
+May 11 17:27:51 GAMEON [info] select g.* from go_games g, go_gamesSubscribers s where s.userID='1' and s.gameID = g.gameID Limit 0,100
+May 11 17:27:55 GAMEON [info] select g.*,t.typeName,s.sportName from go_games g LEFT JOIN go_types_lu t on g.type=t.id LEFT JOIN  go_sports_lu s on g.sport=s.id LEFT JOIN go_wagerTypes_lu w on g.wagerTypeID = w.id  where g.gameID='1273447176'
+May 11 17:27:55 GAMEON [debug] Array
+May 11 17:27:55 GAMEON [debug] http://jittr.com/jittr/gameon/go_getgamesubscribers.php?query=gamesubscribers&gameid=1273447176
+May 11 17:27:55 GAMEON [debug] GameID - 1273447176
+May 11 17:27:55 GAMEON [info] select s.*,u.userName from go_gamesSubscribers s LEFT JOIN go_user u on s.userID = u.userID  where s.gameID = '1273447176'  Limit 0,100
+May 11 17:28:01 GAMEON [info] select g.userName,s.* from go_user g, go_userSettings s where g.userID='1' and g.userID=s.userID 
+May 11 17:28:01 GAMEON [info] select * from go_games where createdByUserID='1' Limit 0,100
+May 11 17:28:01 GAMEON [info] select g.* from go_games g, go_gamesSubscribers s where s.userID='1' and s.gameID = g.gameID Limit 0,100
+May 11 18:28:07 GAMEON [info] select g.userName,s.* from go_user g, go_userSettings s where g.userID='1' and g.userID=s.userID 
+May 11 18:28:57 GAMEON [info] select g.userName,s.* from go_user g, go_userSettings s where g.userID='1' and g.userID=s.userID 
+May 11 18:38:30 GAMEON [info] select g.userName,s.* from go_user g, go_userSettings s where g.userID='1' and g.userID=s.userID 
+May 11 18:39:56 GAMEON [info] select g.userName,s.* from go_user g, go_userSettings s where g.userID='1' and g.userID=s.userID 
+May 11 18:40:16 GAMEON [info] select g.userName,s.* from go_user g, go_userSettings s where g.userID='1' and g.userID=s.userID 
+May 11 18:54:41 GAMEON [info] select g.userName,s.* from go_user g, go_userSettings s where g.userID='1' and g.userID=s.userID 
+May 11 18:55:20 GAMEON [info] select g.userName,s.* from go_user g, go_userSettings s where g.userID='1' and g.userID=s.userID 
+May 11 18:56:02 GAMEON [info] select g.userName,s.* from go_user g, go_userSettings s where g.userID='1' and g.userID=s.userID 
+May 11 18:56:03 GAMEON [info] select * from go_games where createdByUserID='1' Limit 0,100
+May 11 18:56:03 GAMEON [info] select g.* from go_games g, go_gamesSubscribers s where s.userID='1' and s.gameID = g.gameID Limit 0,100
+May 11 18:56:08 GAMEON [info] select g.*,t.typeName,s.sportName from go_games g LEFT JOIN go_types_lu t on g.type=t.id LEFT JOIN  go_sports_lu s on g.sport=s.id LEFT JOIN go_wagerTypes_lu w on g.wagerTypeID = w.id  where g.gameID='1273325871'
+May 11 18:56:08 GAMEON [debug] Array
+May 11 18:56:08 GAMEON [debug] http://jittr.com/jittr/gameon/go_getgamesubscribers.php?query=gamesubscribers&gameid=1273325871
+May 11 18:56:08 GAMEON [debug] GameID - 1273325871
+May 11 18:56:08 GAMEON [info] select s.*,u.userName from go_gamesSubscribers s LEFT JOIN go_user u on s.userID = u.userID  where s.gameID = '1273325871'  Limit 0,100
+May 11 18:58:37 GAMEON [info] select g.userName,s.* from go_user g, go_userSettings s where g.userID='1' and g.userID=s.userID 
+May 11 18:58:37 GAMEON [info] select * from go_games where createdByUserID='1' Limit 0,100
+May 11 18:58:37 GAMEON [info] select g.* from go_games g, go_gamesSubscribers s where s.userID='1' and s.gameID = g.gameID Limit 0,100
+May 11 18:58:40 GAMEON [info] select g.*,t.typeName,s.sportName from go_games g LEFT JOIN go_types_lu t on g.type=t.id LEFT JOIN  go_sports_lu s on g.sport=s.id LEFT JOIN go_wagerTypes_lu w on g.wagerTypeID = w.id  where g.gameID='1273325871'
+May 11 18:58:40 GAMEON [debug] Array
+May 11 18:58:40 GAMEON [debug] http://jittr.com/jittr/gameon/go_getgamesubscribers.php?query=gamesubscribers&gameid=1273325871
+May 11 18:58:40 GAMEON [debug] GameID - 1273325871
+May 11 18:58:40 GAMEON [info] select s.*,u.userName from go_gamesSubscribers s LEFT JOIN go_user u on s.userID = u.userID  where s.gameID = '1273325871'  Limit 0,100
+May 11 19:01:29 GAMEON [info] select g.userName,s.* from go_user g, go_userSettings s where g.userID='1' and g.userID=s.userID 
+May 11 19:04:19 GAMEON [info] select g.userName,s.* from go_user g, go_userSettings s where g.userID='1' and g.userID=s.userID 
+May 13 07:38:33 GAMEON [info] select g.*,t.typeName,s.sportName from go_publicgames g LEFT JOIN go_types_lu t on g.type=t.id LEFT JOIN  go_sports_lu s on g.sport=s.id where g.gameID='1'
+May 13 07:38:33 GAMEON [debug] 
+May 13 07:53:56 GAMEON [info] select g.*,t.typeName,s.sportName from go_publicgames g LEFT JOIN go_types_lu t on g.type=t.id LEFT JOIN  go_sports_lu s on g.sport=s.id where g.gameID='1'
+May 13 07:53:56 GAMEON [debug] 
+May 13 07:58:38 GAMEON [info] select g.*,t.typeName,s.sportName from go_publicgames g LEFT JOIN go_types_lu t on g.type=t.id LEFT JOIN  go_sports_lu s on g.sport=s.id where g.gameID='1'
+May 13 07:58:38 GAMEON [debug] 
+May 13 07:59:47 GAMEON [info] select g.*,t.typeName,s.sportName from go_publicgames g LEFT JOIN go_types_lu t on g.type=t.id LEFT JOIN  go_sports_lu s on g.sport=s.id where g.gameID='1'
+May 13 07:59:47 GAMEON [debug] 
+May 13 08:00:08 GAMEON [info] select g.*,t.typeName,s.sportName from go_publicgames g LEFT JOIN go_types_lu t on g.type=t.id LEFT JOIN  go_sports_lu s on g.sport=s.id where g.gameID='1'
+May 13 08:00:08 GAMEON [debug] 
+May 13 08:01:31 GAMEON [info] select g.*,t.typeName,s.sportName from go_publicgames g LEFT JOIN go_types_lu t on g.type=t.id LEFT JOIN  go_sports_lu s on g.sport=s.id where g.gameID='1'
+May 13 08:01:31 GAMEON [debug] 
+May 13 08:02:23 GAMEON [info] select g.*,t.typeName,s.sportName from go_publicgames g LEFT JOIN go_types_lu t on g.type=t.id LEFT JOIN  go_sports_lu s on g.sport=s.id where g.gameID='1'
+May 13 08:02:23 GAMEON [debug] 
+May 13 08:03:56 GAMEON [info] select g.*,t.typeName,s.sportName from go_publicgames g LEFT JOIN go_types_lu t on g.type=t.id LEFT JOIN  go_sports_lu s on g.sport=s.id where g.gameID='1'
+May 13 08:03:56 GAMEON [debug] 
+May 13 08:05:51 GAMEON [info] select g.*,t.typeName,s.sportName from go_publicgames g LEFT JOIN go_types_lu t on g.type=t.id LEFT JOIN  go_sports_lu s on g.sport=s.id where g.gameID='1'
+May 13 08:05:51 GAMEON [debug] 
+May 13 08:06:18 GAMEON [info] select g.*,t.typeName,s.sportName from go_publicgames g LEFT JOIN go_types_lu t on g.type=t.id LEFT JOIN  go_sports_lu s on g.sport=s.id where g.gameID='1'
+May 13 08:06:18 GAMEON [debug] 
+May 13 08:06:50 GAMEON [info] select g.*,t.typeName,s.sportName from go_publicgames g LEFT JOIN go_types_lu t on g.type=t.id LEFT JOIN  go_sports_lu s on g.sport=s.id where g.gameID='1'
+May 13 08:06:50 GAMEON [debug] 
+May 13 08:08:10 GAMEON [info] select g.*,t.typeName,s.sportName from go_publicgames g LEFT JOIN go_types_lu t on g.type=t.id LEFT JOIN  go_sports_lu s on g.sport=s.id where g.gameID='1'
+May 13 08:08:10 GAMEON [debug] 
+May 13 08:16:48 GAMEON [info] select g.*,t.typeName,s.sportName from go_publicgames g LEFT JOIN go_types_lu t on g.type=t.id LEFT JOIN  go_sports_lu s on g.sport=s.id where g.gameID='1'
+May 13 08:16:48 GAMEON [debug] 
+May 13 08:17:57 GAMEON [info] select g.*,t.typeName,s.sportName from go_publicgames g LEFT JOIN go_types_lu t on g.type=t.id LEFT JOIN  go_sports_lu s on g.sport=s.id where g.gameID='1'
+May 13 08:17:57 GAMEON [debug] 
+May 13 08:22:45 GAMEON [info] select g.*,t.typeName,s.sportName from go_publicgames g LEFT JOIN go_types_lu t on g.type=t.id LEFT JOIN  go_sports_lu s on g.sport=s.id where g.gameID='1'
+May 13 08:22:45 GAMEON [debug] 
+May 13 08:50:08 GAMEON [info] select g.*,t.typeName,s.sportName from go_publicgames g LEFT JOIN go_types_lu t on g.type=t.id LEFT JOIN  go_sports_lu s on g.sport=s.id where g.gameID='1'
+May 13 08:50:08 GAMEON [debug] NULL
+May 13 08:53:00 GAMEON [info] select g.*,t.typeName,s.sportName from go_publicgames g LEFT JOIN go_types_lu t on g.type=t.id LEFT JOIN  go_sports_lu s on g.sport=s.id where g.gameID='1'
+May 13 08:53:00 GAMEON [debug] NULL
+May 13 10:05:35 GAMEON [info] select g.*,t.typeName,s.sportName from go_publicgames g LEFT JOIN go_types_lu t on g.type=t.id LEFT JOIN  go_sports_lu s on g.sport=s.id where g.gameID='1'
+May 13 10:05:35 GAMEON [debug] NULL
+May 13 11:28:17 GAMEON [info] select g.*,t.typeName,s.sportName from go_publicgames g LEFT JOIN go_types_lu t on g.type=t.id LEFT JOIN  go_sports_lu s on g.sport=s.id where g.gameID='1'
+May 13 11:28:17 GAMEON [debug] NULL
+May 13 11:33:42 GAMEON [info] select g.*,t.typeName,s.sportName from go_publicgames g LEFT JOIN go_types_lu t on g.type=t.id LEFT JOIN  go_sports_lu s on g.sport=s.id where g.gameID='1'
+May 13 11:33:42 GAMEON [debug] NULL
+May 13 11:34:29 GAMEON [info] select g.*,t.typeName,s.sportName from go_publicgames g LEFT JOIN go_types_lu t on g.type=t.id LEFT JOIN  go_sports_lu s on g.sport=s.id where g.gameID='1'
+May 13 11:34:29 GAMEON [debug] NULL
+May 13 11:35:04 GAMEON [info] select g.*,t.typeName,s.sportName from go_publicgames g LEFT JOIN go_types_lu t on g.type=t.id LEFT JOIN  go_sports_lu s on g.sport=s.id where g.gameID='1'
+May 13 11:35:04 GAMEON [debug] NULL
+May 13 11:36:18 GAMEON [info] select g.*,t.typeName,s.sportName from go_publicgames g LEFT JOIN go_types_lu t on g.type=t.id LEFT JOIN  go_sports_lu s on g.sport=s.id where g.gameID='1'
+May 13 11:36:18 GAMEON [debug] NULL
+May 13 11:40:18 GAMEON [info] select g.*,t.typeName,s.sportName from go_publicgames g LEFT JOIN go_types_lu t on g.type=t.id LEFT JOIN  go_sports_lu s on g.sport=s.id where g.gameID='1'
+May 13 11:40:18 GAMEON [debug] NULL
+May 13 11:40:51 GAMEON [info] select g.*,t.typeName,s.sportName from go_publicgames g LEFT JOIN go_types_lu t on g.type=t.id LEFT JOIN  go_sports_lu s on g.sport=s.id where g.gameID='1'
+May 13 11:40:51 GAMEON [debug] NULL
+May 13 11:41:41 GAMEON [info] select g.*,t.typeName,s.sportName from go_publicgames g LEFT JOIN go_types_lu t on g.type=t.id LEFT JOIN  go_sports_lu s on g.sport=s.id where g.gameID='1'
+May 13 11:41:41 GAMEON [debug] NULL
+May 13 11:41:44 GAMEON [info] select g.*,t.typeName,s.sportName from go_publicgames g LEFT JOIN go_types_lu t on g.type=t.id LEFT JOIN  go_sports_lu s on g.sport=s.id where g.gameID='1'
+May 13 11:41:44 GAMEON [debug] NULL
+May 13 11:44:46 GAMEON [info] select g.*,t.typeName,s.sportName from go_publicgames g LEFT JOIN go_types_lu t on g.type=t.id LEFT JOIN  go_sports_lu s on g.sport=s.id where g.gameID='1'
+May 13 11:44:46 GAMEON [debug] NULL
+May 13 11:46:12 GAMEON [info] select g.*,t.typeName,s.sportName from go_publicgames g LEFT JOIN go_types_lu t on g.type=t.id LEFT JOIN  go_sports_lu s on g.sport=s.id where g.gameID='1'
+May 13 11:46:12 GAMEON [debug] NULL
+May 13 11:46:27 GAMEON [info] select g.*,t.typeName,s.sportName from go_publicgames g LEFT JOIN go_types_lu t on g.type=t.id LEFT JOIN  go_sports_lu s on g.sport=s.id where g.gameID='1'
+May 13 11:46:27 GAMEON [debug] NULL
+May 13 11:47:01 GAMEON [info] select g.*,t.typeName,s.sportName from go_publicgames g LEFT JOIN go_types_lu t on g.type=t.id LEFT JOIN  go_sports_lu s on g.sport=s.id where g.gameID='1'
+May 13 11:47:01 GAMEON [debug] NULL
+May 13 11:47:59 GAMEON [info] select g.*,t.typeName,s.sportName from go_publicgames g LEFT JOIN go_types_lu t on g.type=t.id LEFT JOIN  go_sports_lu s on g.sport=s.id where g.gameID='1'
+May 13 11:47:59 GAMEON [debug] NULL
+May 13 11:48:29 GAMEON [info] select g.*,t.typeName,s.sportName from go_publicgames g LEFT JOIN go_types_lu t on g.type=t.id LEFT JOIN  go_sports_lu s on g.sport=s.id where g.gameID='1'
+May 13 11:48:29 GAMEON [debug] NULL
+May 13 11:48:29 GAMEON [info] select g.*,t.typeName,s.sportName from go_publicgames g LEFT JOIN go_types_lu t on g.type=t.id LEFT JOIN  go_sports_lu s on g.sport=s.id
+May 13 11:50:47 GAMEON [info] select g.*,t.typeName,s.sportName from go_publicgames g LEFT JOIN go_types_lu t on g.type=t.id LEFT JOIN  go_sports_lu s on g.sport=s.id where g.gameID='1'
+May 13 11:50:47 GAMEON [debug] NULL
+May 13 11:50:47 GAMEON [info] select g.*,t.typeName,s.sportName from go_publicgames g LEFT JOIN go_types_lu t on g.type=t.id LEFT JOIN  go_sports_lu s on g.sport=s.id
+May 13 11:54:54 GAMEON [info] select g.*,t.typeName,s.sportName from go_publicgames g LEFT JOIN go_types_lu t on g.type=t.id LEFT JOIN  go_sports_lu s on g.sport=s.id where g.gameID='1'
+May 13 11:54:54 GAMEON [debug] NULL
+May 13 11:54:54 GAMEON [info] select g.*,t.typeName,s.sportName from go_publicgames g LEFT JOIN go_types_lu t on g.type=t.id LEFT JOIN  go_sports_lu s on g.sport=s.id
+May 14 06:25:10 GAMEON [info] select g.*,t.typeName,s.sportName from go_publicgames g LEFT JOIN go_types_lu t on g.type=t.id LEFT JOIN  go_sports_lu s on g.sport=s.id where g.gameID='1'
+May 14 06:25:10 GAMEON [debug] NULL
+May 14 06:25:10 GAMEON [info] select g.*,t.typeName,s.sportName from go_publicgames g LEFT JOIN go_types_lu t on g.type=t.id LEFT JOIN  go_sports_lu s on g.sport=s.id
+May 14 08:05:06 GAMEON [info] select g.userName,s.* from go_user g, go_userSettings s where g.userName='jittrdev' and g.userID=s.userID 
+May 14 08:05:07 GAMEON [info] select g.userName,s.* from go_user g, go_userSettings s where g.userID='1' and g.userID=s.userID 
+May 14 08:05:08 GAMEON [info] select * from go_games where createdByUserID='1' Limit 0,100
+May 14 08:05:08 GAMEON [info] select g.* from go_games g, go_gamesSubscribers s where s.userID='1' and s.gameID = g.gameID Limit 0,100
+May 14 08:05:30 GAMEON [info] select g.*,t.typeName,s.sportName from go_games g LEFT JOIN go_types_lu t on g.type=t.id LEFT JOIN  go_sports_lu s on g.sport=s.id LEFT JOIN go_wagerTypes_lu w on g.wagerTypeID = w.id  where g.gameID='1273325871'
+May 14 08:05:30 GAMEON [debug] Array
+May 14 08:05:30 GAMEON [debug] http://jittr.com/jittr/gameon/go_getgamesubscribers.php?query=gamesubscribers&gameid=1273325871
+May 14 08:05:30 GAMEON [debug] GameID - 1273325871
+May 14 08:05:30 GAMEON [info] select s.*,u.userName from go_gamesSubscribers s LEFT JOIN go_user u on s.userID = u.userID  where s.gameID = '1273325871'  Limit 0,100
+May 14 08:05:57 GAMEON [info] select g.userName,s.* from go_user g, go_userSettings s where g.userID='1' and g.userID=s.userID 
+May 14 08:05:57 GAMEON [info] select * from go_games where createdByUserID='1' Limit 0,100
+May 14 08:05:57 GAMEON [info] select g.* from go_games g, go_gamesSubscribers s where s.userID='1' and s.gameID = g.gameID Limit 0,100
+May 14 09:33:45 GAMEON [info] select g.*,t.typeName,s.sportName from go_publicgames g LEFT JOIN go_types_lu t on g.type=t.id LEFT JOIN  go_sports_lu s on g.sport=s.id where g.gameID='1'
+May 14 09:33:45 GAMEON [debug] NULL
+May 14 09:33:45 GAMEON [info] select g.*,t.typeName,s.sportName from go_publicgames g LEFT JOIN go_types_lu t on g.type=t.id LEFT JOIN  go_sports_lu s on g.sport=s.id
+May 14 09:34:11 GAMEON [info] select g.*,t.typeName,s.sportName from go_publicgames g LEFT JOIN go_types_lu t on g.type=t.id LEFT JOIN  go_sports_lu s on g.sport=s.id where g.gameID='1'
+May 14 09:34:11 GAMEON [debug] NULL
+May 14 09:34:11 GAMEON [info] select g.*,t.typeName,s.sportName from go_publicgames g LEFT JOIN go_types_lu t on g.type=t.id LEFT JOIN  go_sports_lu s on g.sport=s.id
+May 14 09:34:27 GAMEON [info] select g.*,t.typeName,s.sportName from go_publicgames g LEFT JOIN go_types_lu t on g.type=t.id LEFT JOIN  go_sports_lu s on g.sport=s.id where g.gameID='1'
+May 14 09:34:27 GAMEON [debug] NULL
+May 14 09:34:27 GAMEON [info] select g.*,t.typeName,s.sportName from go_publicgames g LEFT JOIN go_types_lu t on g.type=t.id LEFT JOIN  go_sports_lu s on g.sport=s.id
+May 14 09:34:56 GAMEON [info] select g.*,t.typeName,s.sportName from go_publicgames g LEFT JOIN go_types_lu t on g.type=t.id LEFT JOIN  go_sports_lu s on g.sport=s.id where g.gameID='1'
+May 14 09:34:56 GAMEON [debug] NULL
+May 14 09:34:56 GAMEON [info] select g.*,t.typeName,s.sportName from go_publicgames g LEFT JOIN go_types_lu t on g.type=t.id LEFT JOIN  go_sports_lu s on g.sport=s.id
+May 14 09:38:14 GAMEON [info] select g.*,t.typeName,s.sportName from go_publicgames g LEFT JOIN go_types_lu t on g.type=t.id LEFT JOIN  go_sports_lu s on g.sport=s.id where g.gameID='1'
+May 14 09:38:14 GAMEON [debug] NULL
+May 14 09:38:14 GAMEON [info] select g.*,t.typeName,s.sportName from go_publicgames g LEFT JOIN go_types_lu t on g.type=t.id LEFT JOIN  go_sports_lu s on g.sport=s.id
+May 14 09:39:06 GAMEON [info] select g.*,t.typeName,s.sportName from go_publicgames g LEFT JOIN go_types_lu t on g.type=t.id LEFT JOIN  go_sports_lu s on g.sport=s.id where g.gameID='1'
+May 14 09:39:06 GAMEON [debug] NULL
+May 14 09:39:06 GAMEON [info] select g.*,t.typeName,s.sportName from go_publicgames g LEFT JOIN go_types_lu t on g.type=t.id LEFT JOIN  go_sports_lu s on g.sport=s.id

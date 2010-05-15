@@ -28,12 +28,17 @@ drop table if exists go_user
  * Does it make sense to have a master record with no defined social network crendentials? Not much sense or utility especially if gameon does not
  * define its own social network functionality. 
  * privacy is initially confined to private or public managed through boolean - true = private, false = public
+ *
+ * primaryNetwork field  indicates the primary network used as the identity of the user, Initially faceboom,twitter or foursquare. Wil consider aim 
+ * based on whether they support OAuth authentication (95% certain they do)
  */
 create table go_user (
       userID integer primary key auto_increment not null,
       userName varchar(50) not null default 'Julio',
       privacy boolean not null default true,
       bankBalance float not null default 0,
+      primaryNetworkID int  null default 0,
+      primaryNetworkName varchar(25) null,
       createdDate timestamp not null default current_timestamp(),
       modifiedDate timestamp null
 )

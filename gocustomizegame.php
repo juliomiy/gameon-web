@@ -22,7 +22,7 @@ function getGameSubscribers($gameID) {
       echo("<ul>");
       foreach($document->game as $game) {
           //echo('<li><a href="gocustomizegame.php?gameid=' . $game->gameid . '">' . $game->title . '</a></li>');
-          echo('<li>' . $game->username . '</li>');
+          echo('<li><a href="' . Config::getRootDomain() . '/goprofile.php?userid=' . $game->userid . '">' . $game->username . '</a></li>');
       }
    }
    echo("</ul>");

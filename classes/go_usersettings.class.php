@@ -10,6 +10,7 @@ require_once('goutility.class.php');
 */
 class goUserSettings {
   private $userID;
+  private $userName;
   private $facebookUserID;
   private $twitterUserID;
   private $foursquareUserID;
@@ -26,14 +27,21 @@ class goUserSettings {
   private $facebookOAuthTokenSecret;
   private $facebookProfileImageUrl;
   private $LOG;
+  private $outputFlag;
 
   public function __construct() {
        $this->LOG = Config::getLogObject();
        if (func_num_args()) {
-         //$userID = func_get_arg(0);
-         $this->getUserSettings(1);
-         //$this->getUserSettings($userID);
+         $userID = func_get_arg(0);
+         //$this->getUserSettings(1);
+         $this->getUserSettings($userID);
        }
+  }
+
+/* determines the type of output returned by _toString. currently one supported is xml
+*/
+  public function setOutputFlag($in) {
+      $this->outputFlag=$in;
   }
 
   public function setUserID($userID) {
@@ -75,29 +83,52 @@ class goUserSettings {
   public function hasFoursquare() {
      return !(empty($this->foursquareUserID));
   }
+  public function getFacebookUserID() {
+     return $this->facebookUserID;
+  }
 
-  public function setFacebookID($id) {
+  public function setFacebookUserID($id) {
      $this->facebookUserID=$id;
   }
 
-  public function setTwitterID($id) {
+  public function setTwitterUserID($id) {
      $this->twitterUserID=$id;
   }
 
-  public function setFoursquareID($id) {
+  public function getTwitterUserID() {
+     return $this->twitterUserID;
+  }
+
+  public function setFoursquareUserID($id) {
      $this->foursquareUserID=$id;
+  }
+
+  public function getFoursquareUserID() {
+     return $this->foursquareUserID;
   }
 
   public function setFacebookDefault($default) {
      $this->facebookDefault=$default;
   }
 
+  public function getFacebookDefault() {
+     return $this->facebookDefault;
+  }
+
   public function setTwitterDefault($default) {
      $this->twitterDefault=$default;
   }
 
+  public function getTwitterDefault() {
+     return $this->twitterDefault;
+  }
+
   public function setFoursquareDefault($default) {
      $this->foursquareDefault=$default;
+  }
+
+  public function getFoursquareDefault() {
+     return $this->foursquareDefault;
   }
 
   public function setTwitterOAuthTokenSecret($oauth) {
@@ -165,9 +196,9 @@ class goUserSettings {
      if ($row) {
         $this->setUserID($row['userID']); 
         $this->setUserName($row['userName']); 
-        $this->setFacebookID($row['facebookID']); 
-        $this->setTwitterID($row['twitterID']); 
-        $this->setFoursquareID($row['foursquareID']); 
+        $this->setFacebookUserID($row['facebookID']); 
+        $this->setTwitterUserID($row['twitterID']); 
+        $this->setFoursquareUserID($row['foursquareID']); 
         $this->setFacebookDefault($row['facebookDefault']); 
         $this->setTwitterDefault($row['twitterDefault']); 
         $this->setFoursquareDefault($row['foursquareDefault']); 
@@ -228,6 +259,38 @@ class goUserSettings {
      if (!$cursor) die(mysqli_error($link));
      $link->close();
      return true;
+  }
+
+  /* return XML formatted output = for use when being called by webservice */ 
+  public function __toString() {
+      if ($this->outputFlag=='xml') 
+         return $this->toStringXML();
+      return "";
+  }
+  /* return XML formatted output = for use when being called by webservice */ 
+  private function toStringXML() {
+     $xml="";
+
+     Utility::$emitForm="string";
+     $xml .= Utility::emitXML("","usersettings",0);
+
+     $xml .=Utility::emitXML($this->getUserID(),"userid");
+     $xml .=Utility::emitXML($this->getUserName(),"username");
+     $xml .=Utility::emitXML($this->getFacebookUserID(),"facebookuserid");
+     $xml .=Utility::emitXML($this->getFacebookProfileImageURL(),"facebookprofileimageurl");
+     $xml .=Utility::emitXML($this->getTwitterUserID(),"twitteruserid");
+     $xml .=Utility::emitXML($this->getTwitterProfileImageURL(),"twitterprofileimageurl");
+     $xml .=Utility::emitXML($this->getFoursquareUserID(),"foursquareuserid");
+     $xml .=Utility::emitXML($this->getFoursquareProfileImageURL(),"foursquareprofileimageurl");
+
+     $xml .= Utility::emitXML("","settings",0);
+     $xml .= Utility::emitXML($this->getFacebookDefault(),"facebookdefault");
+     $xml .= Utility::emitXML($this->getTwitterDefault(),"twitterdefault");
+     $xml .= Utility::emitXML($this->getFoursquareDefault(),"foursquaredefault");
+     $xml .= Utility::emitXML("","settings",0);
+
+     $xml .=Utility::emitXML("","usersettings",0);
+     return $xml;
   }
 
 } //class goUserSettings

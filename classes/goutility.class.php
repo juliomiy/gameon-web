@@ -5,7 +5,11 @@
 */   
 class Utility {
 
+
 /* emit xml */
+/* TODO - add switch to return string instead of echo's to output buffer*/
+public static $emitForm="";
+
 public static function emitXML($in,$tag,$close=1) {
 static $levels=0;
 static $level;
@@ -23,8 +27,11 @@ else {
           $levels++;
         }
      }//if
-echo($str);
-return;
+if (self::$emitForm != 'string') 
+    echo($str);
+else    
+   return $str;
+   
 } //emitXML
 /* Generate unique key of type - generally for mysql primary keys when auto increment is not
    enabled
