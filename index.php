@@ -5,7 +5,15 @@ ini_set('include_path','/home/juliomiyares/jittr.com/jittr/gameon/classes' . ':'
 require_once('config.class.php');
 require_once('goutility.class.php');
 require_once('go_usersettings.class.php');
+$LOG = Config::getLogObject();
 
+$logout = $_GET['logout'];
+if ($logout=="true") {
+   setcookie("username", "", time()-3600); 
+   setcookie("userid", "", time()-3600); 
+   header("Location:" . $_SERVER['PHP_SELF']);
+   exit;
+}
 $userID = $_COOKIE['userid'];
 $userName = $_COOKIE['username'];
 if (!isset($userID,$userName)) {
@@ -19,7 +27,8 @@ if (!isset($_GET['title'])) {
    $userSettings = new goUserSettings($userID);
 ?>
 <div id="personal">
-<h2><?php echo("Welcome user $userName - you have ID of $userID"); ?></h2>
+<h2><?php echo('Welcome user <a href="goprofile.php?userid=' . $userID . '">'  .  $userName . '</a>' . " - you have ID of $userID"); ?></h2>
+<a href="<?php echo($_SERVER['PHP_SELF'] . "?logout=true"); ?>">Logout</a>
 </div>
 <br />
 <div id="creategame">
@@ -33,6 +42,16 @@ Wager Type:
 Wager Units:
 <input type="text" name="wagerunits" />
 <br />
+Select Game Type:
+<?php generateTypelistbox(); ?>
+<br />
+<div id="datewagerinput">
+Pivot Date:
+<input type="text" name="pivotdate" />
+<?php generatePivotCondition(); ?>
+<br />
+</div>
+<div id="socialnetworkinput">
 Facebook:
 <?php if ($userSettings->hasFacebook()) { 
    echo '<input type="checkbox" name="network" value="facebook" ' . ($userSettings->isDefaultFacebook() ? "checked": null)  . '/>';
@@ -63,6 +82,7 @@ FourSquare:
    }
 ?>   
 <br />
+</div>
 <input type="submit" value="Submit" />
 <input type="hidden" value="<?php echo($userID);?>" name="createdbyuserid" />
 <input type="hidden" value="<?php echo($userName);?>" name="createdbyusername" />
@@ -84,12 +104,21 @@ echo('</div>');
   $title = $_GET['title'];
   $wagerType = $_GET['wagertype'];
   $wagerUnits = $_GET['wagerunits'];
+  $typeID=$_GET['type'];
+  $pivotDate=$_GET['pivotdate'];
+  $pivotCondition=$_GET['pivotcondition'];
+//temporarily hardcoded TODO - remove hardcoding
+  $typeName='date';
+  $typeID=4;
 
-  $url = "http://jittr.com/jittr/gameon/go_postnewgame.php?title=" . urlencode($title) . "&wagertype=" . urlencode($wagerType) . "&wagerunits=" . $wagerUnits . "&createdbyusername=$userName" . "&createdbyuserid=$userID";
+  
+  $url = "http://jittr.com/jittr/gameon/go_postnewgame.php?title=" . urlencode($title) . "&wagertype=" . urlencode($wagerType) . "&wagerunits=" . $wagerUnits . "&createdbyusername=$userName" . "&createdbyuserid=$userID&typename=$typeName&pivotdate=$pivotDate&pivotcondition=$pivotCondition&type=$typeID";
+  if (Config::getDebug()) $LOG->log("$url",PEAR_LOG_INFO);
   $curl = curl_init($url);
   curl_setopt($curl,CURLOPT_RETURNTRANSFER,true);
   $result = curl_exec($curl);
   curl_close($curl);
+  if (Config::getDebug()) $LOG->log("$result",PEAR_LOG_INFO);
   ob_end_clean();
   header("Location:".$_SERVER['PHP_SELF']);
 } //else  
@@ -142,5 +171,38 @@ function getUserSubscribedGames($userID) {
 //TODO - define database table storing this information before fleshing out webservice and this function
 function getOpenInvites($userID) {
 } //getOpenInvites
+function generatePivotCondition($pivotCondition=null) {
+   echo('<select name="pivotcondition">');
+
+       $selected = (strtolower($pivotCondition) == strtolower('after')) ?   "SELECTED" : null;
+       echo('<option value="after"'  . $selected . '>After</option>');
+
+       $selected = (strtolower($pivotCondition) == strtolower('between')) ?  "SELECTED" : null;
+       echo('<option value="between"'  . $selected . '>Between</option>');
+
+       $selected = (strtolower($pivotCondition) == strtolower('before')) ?  "SELECTED" : null;
+       echo('<option value="before"'  . $selected . '>Before</option>');
+
+       $selected = (strtolower($pivotCondition) == strtolower('on')) ?  "SELECTED" : null;
+       echo('<option value="on"'  . $selected . '>On</option>');
+   echo('</select>');
+}
+function generateTypeListbox($typeName=null) {
+    global $LOG;
+    $link = @mysqli_connect(Config::getDatabaseServer(),Config::getDatabaseUser(), Config::getDatabasePassword(),Config::getDatabase());
+    if (!$link) mydie("Error connecting to Database");
+    $sql="select * from go_types_lu order by typeName";
+    if (Config::getDebug()) $LOG->log("$sql",PEAR_LOG_INFO);
+    $cursor=@mysqli_query($link,$sql);
+    if (!$cursor) $this->mydie(mysqli_error($link),$link);
+    echo('<select id="typelistbox" name="typename">');
+    while (($row = @mysqli_fetch_assoc($cursor)) != null) {
+       $selected = (strtoupper($typeName) == strtoupper($row['typeName'])) ?  ' SELECTED' : null;
+       echo('<option value="' . $row['id'] . '"' . $selected . '>' . $row['typeName'] .  '</option>');
+    }
+   $link->close();
+   echo('</select>');
+}
+
 ?>
 

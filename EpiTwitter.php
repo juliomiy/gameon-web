@@ -1,5 +1,6 @@
 <?php
-class EpiTwitter extends EpiOAuth
+require_once('EpiTwitterOAuth.php');
+class EpiTwitter extends EpiTwitterOAuth
 {
   const EPITWITTER_SIGNATURE_METHOD = 'HMAC-SHA1';
   protected $requestTokenUrl = 'http://twitter.com/oauth/request_token';
@@ -45,5 +46,9 @@ class EpiTwitterJson
     }
 
     return $this->$name;
+  }
+  //added JHM june 3,2010
+  public function __toString() {
+    return $this->responseText;
   }
 }

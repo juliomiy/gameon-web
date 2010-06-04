@@ -35,6 +35,10 @@ drop table if exists go_user
 create table go_user (
       userID integer primary key auto_increment not null,
       userName varchar(50) not null default 'Julio',
+      password varchar(32) not null,
+      firstName varchar(50) null,
+      lastName varchar(50) null,
+      name varchar(100) null,
       privacy boolean not null default true,
       bankBalance float not null default 0,
       primaryNetworkID int  null default 0,
@@ -127,6 +131,10 @@ ENGINE INNODB
   createdBy - unique USERID of person setting up wager, refers to Id in go_users
   title, eventName, description are meta-data fields mostly for UI purposes to provide context/info about the event itself 
   subscriptionClose - timestamp of when the wagering window closes. After this time, no more parties can subscribe to the wager.
+
+ added pivotDate and pivotCondition for date driven wagers - pivotCondition , before, on, after , between
+ pivotDate is the date the pivotCondition will operate against.
+
 */
 drop table if exists go_games
 //
@@ -143,8 +151,13 @@ create table go_games (
    date timestamp null,
    description varchar(255) null,
    type  int not null default 0,
+   typeName  varchar(50) null ,
+   pivotDate datetime null,
+   pivotCondition varchar(10) null,
    sport int not null default 0,
    subscriptionClose timestamp null,
+   syndicationUrl varchar(255) not null,
+   subscriptionOpen boolean not null default true,
    createdDate timestamp not null default current_timestamp(),
    modifiedDate timestamp null,
    PRIMARY KEY(gameID)
@@ -183,6 +196,7 @@ create table go_publicgames (
    description varchar(255) null,
    type  int not null default 0,
    sport int not null default 0,
+   leagueID int not null default 0,
    createdDate timestamp not null default current_timestamp(),
    modifiedDate timestamp null,
    PRIMARY KEY (gameID),
@@ -280,6 +294,27 @@ create table go_sports_lu (
 )
 ENGINE=INNODB
 //
+drop table if exists go_leagues_lu
+//
+create table go_leagues_lu (
+  id int not null AUTO_INCREMENT,
+  leagueName varchar(50) not null,
+  createdDate timestamp not null default current_timestamp(),
+  modifiedDate timestamp null,
+  PRIMARY KEY(id),
+  unique index(leagueName)
+)
+ENGINE=INNODB
+//
+insert into go_leagues_lu (leagueName) values ("NFL")
+//
+insert into go_leagues_lu (leagueName) values ("MLB")
+//
+insert into go_leagues_lu (leagueName) values ("NBA")
+//
+insert into go_leagues_lu (leagueName) values ("NHL")
+//
+
 insert into go_sports_lu (id, leagueName, sportName) values (0,"undefined","undefined")
 //
 insert into go_sports_lu (leagueName,sportName) values ("NFL","Football")

@@ -12,7 +12,7 @@
 $include_path=ini_get('include_path');
 ini_set('include_path','.:/home/juliomiyares/jittr.com/jittr/gameon/classes' . ':' . $include_path);
 
-require_once('foursquare/EpiOAuth.php');
+require_once('/home/juliomiyares/jittr.com/jittr/gameon/foursquare/EpiOAuth.php');
 
 class EpiFoursquare extends EpiOAuth
 {

@@ -33,7 +33,6 @@ class goUserSettings {
        $this->LOG = Config::getLogObject();
        if (func_num_args()) {
          $userID = func_get_arg(0);
-         //$this->getUserSettings(1);
          $this->getUserSettings($userID);
        }
   }
@@ -115,6 +114,14 @@ class goUserSettings {
      return $this->facebookDefault;
   }
 
+  public function getFacebookOAuthToken() {
+     return $this->facebookOAuthToken;
+  }
+
+  public function getFacebookOAuthTokenSecret() {
+     return $this->facebookOAuthTokenSecret;
+  }
+
   public function setTwitterDefault($default) {
      $this->twitterDefault=$default;
   }
@@ -131,10 +138,16 @@ class goUserSettings {
      return $this->foursquareDefault;
   }
 
+  public function getTwitterOAuthTokenSecret() {
+     return $this->twitterOAuthTokenSecret;
+  }
   public function setTwitterOAuthTokenSecret($oauth) {
      $this->twitterOAuthTokenSecret = $oauth;
   }
   
+  public function getTwitterOAuthToken() {
+     return $this->twitterOAuthToken;
+  }
   public function setTwitterOAuthToken($oauth) {
      $this->twitterOAuthToken = $oauth;
   }
@@ -155,6 +168,14 @@ class goUserSettings {
      $this->foursquareOAuthToken = $oauth;
   }
   
+  public function getFoursquareOAuthTokenSecret() {
+     return $this->foursquareOAuthTokenSecret;
+  }
+  
+  public function getFoursquareOAuthToken() {
+     return $this->foursquareOAuthToken;
+  }
+
   public function getFoursquareProfileImageUrl() {
      return $this->foursquareProfileImageUrl; 
   }
@@ -176,6 +197,31 @@ class goUserSettings {
   
   public function setFacebookProfileImageUrl($url) {
      $this->facebookProfileImageUrl = $url;
+  }
+  /* checks the credentials passed in to log in
+     returns > 0 (userID) if the login is successful
+     0 otherwise
+  */
+  public static function login($userName, $password) {
+     $userID=0;
+     $link = mysqli_connect(Config::getDatabaseServer(),Config::getDatabaseUser(), Config::getDatabasePassword(),Config::getDatabase());
+     if (!$link) mydie("Error connecting to Database");
+   
+     $sql=sprintf("select userID from go_user where userName='%s' and password='%s'",
+             mysqli_real_escape_string($link,$userName),
+             mysqli_real_escape_string($link,$password));
+
+     if (Config::getDebug()) Config::getLogObject()->log("$sql",PEAR_LOG_INFO);
+     $cursor=@mysqli_query($link,$sql);
+     if (!$cursor) die(mysqli_error($link));
+     $row = @mysqli_fetch_assoc($cursor);
+     if ($row) {
+        $userID = $row['userID'];
+     }
+     $link->close(); 
+     
+     if (Config::getDebug()) Config::getLogObject()->log("Value of userID = $userID");
+     return $userID;
   }
   /* retrieve GameOn user by userID or userName, default is by userID
   */
@@ -244,7 +290,7 @@ class goUserSettings {
              mysqli_real_escape_string($link,$tok),
              mysqli_real_escape_string($link,$sec),
              mysqli_real_escape_string($link,$userID));
-     if (Config::getDebug()) $LOG->log("$sql",PEAR_LOG_INFO);
+     if (Config::getDebug()) $this->LOG->log("$sql",PEAR_LOG_INFO);
      $cursor=mysqli_query($link,$sql);
      if (!$cursor) die(mysqli_error($link));
      $link->close();

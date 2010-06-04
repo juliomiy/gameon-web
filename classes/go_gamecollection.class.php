@@ -59,7 +59,7 @@ class goGameCollection {
   	       $game->setEventDate($row['eventDate']);
 	       $game->setSportID($row['sport']);
 	       $game->setSportName($row['sportName']);
-	       $game->setLeague($row['league']);
+	       $game->setLeagueName($row['leagueName']);
 	       $game->setFavorite($row['favorite']);
 	       $game->setTypeID($row['type']);
 	       $game->setTypeName($row['typeName']);

@@ -20,7 +20,7 @@ class goPublicgame {
    private $typeID;
    private $type;
    private $sportID;
-   private $leauge;
+   private $leagueName;
    private $sport;
    private $favorite;
    private $numberofSubscribers;
@@ -44,7 +44,7 @@ class goPublicgame {
 
    /* sql for getting a list of games -the caller will determine the where condtions*/
    public static function getSql() {
-      $sql="select g.*,t.typeName,s.sportName from go_publicgames g LEFT JOIN go_types_lu t on g.type=t.id LEFT JOIN  go_sports_lu s on g.sport=s.id"; 
+      $sql="select g.*,t.typeName,s.sportName,l.leagueName from go_publicgames g LEFT JOIN go_types_lu t on g.type=t.id LEFT JOIN  go_sports_lu s on g.sport=s.id LEFT JOIN go_leagues_lu l on g.leagueID=l.id"; 
       return $sql;
    }
    public function getGameID() {
@@ -81,11 +81,11 @@ class goPublicgame {
    public function getSportName() {
       return $this->sport;
    }
-   public function getLeague() {
-      return $league;
+   public function getLeagueName() {
+      return $this->leagueName;
    }
-   public function setLeague($in) {
-      $this->league=$in;
+   public function setLeagueName($in) {
+      $this->leagueName=$in;
    }
 
    public function getFavorite() {
@@ -138,7 +138,7 @@ class goPublicgame {
       $link = @mysqli_connect(Config::getDatabaseServer(),Config::getDatabaseUser(), Config::getDatabasePassword(),Config::getDatabase());
       if (!$link) mydie("Error connecting to Database");
 
-      $sql=sprintf("select g.*,t.typeName,s.sportName from go_publicgames g LEFT JOIN go_types_lu t on g.type=t.id LEFT JOIN  go_sports_lu s on g.sport=s.id where g.gameID='%u'", mysqli_real_escape_string($link,$gameID));
+      $sql=sprintf("select g.*,t.typeName,s.sportName, l.leagueName from go_publicgames g LEFT JOIN go_types_lu t on g.type=t.id LEFT JOIN  go_sports_lu s on g.sport=s.id LEFT JOIN go_leagues_lu l on g.leagueID = l.id where g.gameID='%u'", mysqli_real_escape_string($link,$gameID));
       if (Config::getDebug()) $this->LOG->log("$sql",PEAR_LOG_INFO);
 
       $cursor=@mysqli_query($link,$sql);
@@ -154,11 +154,15 @@ class goPublicgame {
       $this->setEventDate($row['eventDate']);
       $this->setSportID($row['sport']);
       $this->setSportName($row['sportName']);
-      $this->setLeague($row['league']);
+      $this->setLeagueName($row['leagueName']);
       $this->setFavorite($row['favorite']);
       $this->setTypeID($row['type']);
       $this->setTypeName($row['typeName']);
  //     $this->setSubscriptionClose($row['subscriptionClose']);
+   //a little cleanup for properties that may be empty
+      if (empty($this->eventName)) $this->setEventName($this->getTitle());
+      if (empty($this->description)) $this->setDescription($this->getTitle());
+
    }
 
    private function mydie($message,$link=null) {
@@ -169,9 +173,13 @@ class goPublicgame {
 
      /* return XML formatted output = for use when being called by webservice */
    public function __toString() {
-         if ($this->outputFlag=='xml')
-            return $this->toStringXML();
-        return "";
+         if ($this->outputFlag=='xml') {
+            $xml = "<publicgames>";
+            $xml .= $this->toStringXML();
+            $xml .= "</publicgames>";
+            return $xml;
+	 }
+	 return "";
    } //function
 
    private function toStringXML() {
@@ -185,7 +193,7 @@ class goPublicgame {
      $xml .=Utility::emitXML($this->getDescription(),"description");
      $xml .=Utility::emitXML($this->getTypeName(),"type");
      $xml .=Utility::emitXML($this->getSportName(),"sport");
-     $xml .=Utility::emitXML($this->getLeague(),"league");
+     $xml .=Utility::emitXML($this->getLeagueName(),"league");
      $xml .=Utility::emitXML($this->getFavorite(),"favorite");
      $xml .=Utility::emitXML($this->getNumberofSubscribers(),"numbersubscribers");
      $xml .=Utility::emitXML("","publicgame",0);

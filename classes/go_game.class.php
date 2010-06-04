@@ -23,10 +23,31 @@ class Game {
    private $wagerUnits;
    private $wagerType;
    private $wagerTypeID;
+   private $pivotDate;
+   private $pivotCondition;
    private $createdByUserID;
    private $createdByUserName;
-   private $subscriptionClose;
+   private $subscriptionCloseDate;  // date the subscription period for accepting wager lapses
+   private $subscriptionOpen;   //true if open, false otherwise , if true, users can still assume/take the bet
+   private $syndicationUrl;    // shortened syndication url to game/wager
    private $LOG;
+
+   // dates will be assumed to be in DateTime object format with the local of the user specified
+   // initially all date/time will be normalized for server time - normalization for GMT is a small step after that
+   public static function getDefaultSubscriptionClose($typeName, $pivotDateStart, $pivotDateEnd=null) {
+
+      if (get_class($pivotDateStart) != "DateTime") return null;
+      $serverTZ = date_default_timezone_get();
+      $pivotDateStart->setTimeZone(new DateTimeZone($serverTZ));
+      $timeNow = new DateTime("now",new DateTimeZone($serverTZ));
+
+      $timeNowTMZ= strtotime($timeNow->format("Y-m-dTH:i:s"));  //convert to int - unix epoch
+      $pivotTMZ = strtotime($pivotDateStart->format("Y-m-dTH:i:s")); //convert to int - unix epoch
+      $diffTMZ=  ($pivotTMZ-$timeNowTMZ)/2; //take half of the difference
+      $closeDateTMZ = $pivotTMZ - $diffTMZ;   //calculate defaultCLoseDate in Unix epoch
+      $closeDate = date("Y-m-dTH:i:s",$closeDateTMZ);
+      return new DateTime($closeDate,new DateTimeZone($serverTZ));
+   }
 
    public function __construct() {
        $this->LOG = Config::getLogObject();
@@ -77,13 +98,19 @@ class Game {
    public function getWagerType() {
        return $this->wagerType;
    }
-   public function getSubscriptionClose() {
-       return $this->subscriptionClose;
+   public function getSubscriptionOpem() {
+       return $this->subscriptionOpen;
    }    
-   public function setSubscriptionClose($in) {
-      $this->subscriptionClose=$in;
+   public function setSubscriptionOpen($in) {
+      $this->subscriptionOpen=$in;
    }    
 
+   public function getSubscriptionCloseDate() {
+       return $this->subscriptionCloseDate;
+   }    
+   public function setSubscriptionCloseDate($in) {
+      $this->subscriptionCloseDate=$in;
+   }    
    public function setGameID($in) {
       $this->gameID=$in;
    }
@@ -123,8 +150,25 @@ class Game {
    public function setWagerUnits($in) {
       $this->wagerUnits=$in;
    }
-
-
+   public function getSyndicationUrl() {
+      return $this->syndicationUrl;
+   }
+   public function setSyndicationUrl($in) {
+      $this->syndicationUrl = $in;
+   }
+   public function getPivotDate() {
+      return $this->pivotDate;
+   }
+   public function setPivotDate($in) {
+      $this->pivotDate = $in;
+   }
+   public function setPivotCondition($in) {
+      $this->pivotCondition = $in;
+   }
+   public function getPivotCondition() {
+      return $this->pivotCondition;
+   }
+  
 /* Retrieve Game record from go_games table and populate object properties */
 /* TODO - for expediency, joins prevail - not scalable, use denormalized table or in memory cache   
 */
@@ -147,7 +191,7 @@ class Game {
       $this->setPublicGameID($row['publicGameID']);
       $this->setDescription($row['description']);
       $this->setCreatedByUserID($row['createdByUserID']);
-      $this->setCreatedByUserID($row['createdByUserName']);
+      $this->setCreatedByUserName($row['createdByUserName']);
       $this->setTitle($row['title']);
       $this->setSportID($row['sport']);
       $this->setSportName($row['sportName']);
@@ -156,7 +200,11 @@ class Game {
       $this->setWagerUnits($row['wagerUnits']);
       $this->setWagerTypeID($row['wagerTypeID']);
       $this->setWagerType($row['wagerType']);
-      $this->setSubscriptionClose($row['subscriptionClose']);
+      $this->setSubscriptionCloseDate($row['subscriptionClose']);
+      $this->setSubscriptionOpen($row['subscriptionOpen']);
+      $this->setSyndicationUrl($row['syndicationUrl']);
+      $this->setPivotDate($row['pivotDate']);
+      $this->setPivotCondition($row['pivotCondition']);
    }
    private function mydie($message,$link=null) {
       $this->LOG->log("$message",PEAR_LOG_ERR);

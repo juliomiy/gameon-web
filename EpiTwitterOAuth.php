@@ -1,5 +1,7 @@
 <?php
-class EpiOAuth
+require_once('EpiTwitterCurl.php');
+
+class EpiTwitterOAuth
 {
   public $version = '1.0';
 
@@ -204,7 +206,7 @@ class EpiOAuth
     $this->consumerKey = $consumerKey;
     $this->consumerSecret = $consumerSecret;
     $this->signatureMethod = $signatureMethod;
-    $this->curl = EpiCurl::getInstance();
+    $this->curl = EpiTwitterCurl::getInstance();
   }
 }
 

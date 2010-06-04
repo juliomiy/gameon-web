@@ -106,6 +106,7 @@ class EpiOAuth
   {
     $this->token = $token;
     $this->tokenSecret = $secret;
+    echo("token - " . $token . " tokenSecret - " . $secret);
   } 
 
   public function useSSL($use = false)

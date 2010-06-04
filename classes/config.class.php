@@ -23,6 +23,7 @@ class Config {
     const FAVICONURL="favicon-1.ico";
     const LOGOURL="jittr_logo.png";
     const  JSLIB = "http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js";
+    const APPJS="gameon.js";
     const COMMONCSS = "common.css";
     const SCRIPTDIR =  "scripts";
     const IMAGEDIR = "images";
@@ -50,12 +51,33 @@ class Config {
     const FACEBOOK_CONSUMERKEY="113817188649294";
     const FACEBOOK_CONSUMERKEYSECRET="d0e1c39b00814c1cb4819f5133338c89";
 
-    const TWITTER_CONSUMERKEY="";
-    const TWITTER_CONSUMERKEYSECRET="";
- 
+    const TWITTER_CONSUMERKEY="ulBahZRGnn584YAgGMIQ";
+    const TWITTER_CONSUMERKEYSECRET="a5uugdaRSrXrYlBmb6AbR09ezfsPF34SqI3akvIVh4";
+
+//Bit.ly url shortening credentials
+    public static $BITLY = array(
+               LOGIN => 'juliomiy',
+               APIKEY => 'R_c0c99b6cb2bdc290ab8ddf32ccd73a48',
+               APIURL => 'http://api.bit.ly/v3/shorten?',
+               DEFAULTFORMAT => 'xml',
+    ); 
     private function  __construct() {
 
     } //constructor
+    /**
+     * Default options for curl.
+     */
+    public static $CURL_OPTS = array(
+       CURLOPT_CONNECTTIMEOUT => 10,
+       CURLOPT_RETURNTRANSFER => true,
+       CURLOPT_TIMEOUT        => 60,
+       CURLOPT_USERAGENT      => 'gameone-php-1.0',
+    );
+
+    /* returns the application specific Javascript file */
+    public static function getJSLibApp() {
+       return self::SCRIPTDIR . "/" . self::APPJS;
+    }
 
     public static function getRootDomain() {
        return self::ROOT_DOMAIN;
@@ -79,6 +101,14 @@ class Config {
 
     public static function getAPIDomain() {
        return self::API_DOMAIN;
+    }
+
+    public static function getTwitterConsumerKey() {
+       return self::TWITTER_CONSUMERKEY;
+    }
+
+    public static function getTwitterConsumerKeySecret() {
+       return self::TWITTER_CONSUMERKEYSECRET;
     }
 
     public static function getPayPalBusinessAccount() {
