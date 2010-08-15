@@ -118,6 +118,35 @@ create table go_userBank (
 )
 ENGINE INNODB
 //	
+/* Transactional detail of user Bank.
+   contains a record of every wager whether current, reconciled (ended with win or lost), outstanding 
+   because of dispute or cancelled
+   wagerType
+         initiater
+         took the bet
+   wagerStatus
+         open - bet has not been reconciled yet
+         closed - event underlying the bet has occurred, winner determined and funds reconciled
+         cancelled - bet has been cancelled
+         disputed - results of event are disputed    
+*/
+drop table if exists go_userBankDetail
+//
+create table go_userBankDetail (
+   userID int not null,
+   gameID int not null,
+   transactionID int not null AUTO_INCREMENT,
+   wagerTypeID int not null default 0,
+   wagerType varchar(25) null,
+   wagerStatusID int not null default 0,
+   wagerStatus varchar(25) null,
+   createdDate timestamp not null default current_timestamp(),
+   modifiedDate timestamp null,
+   PRIMARY KEY(transactionID)  
+)
+ENGINE INNODB
+//
+
 /* listings of all games public and user defined */
 /* if the game is a public game, will have a reference to the Master in go_publicgames*/
 /* A public game is an artifact to represent contests in the college/professional ranks
@@ -135,6 +164,14 @@ ENGINE INNODB
  added pivotDate and pivotCondition for date driven wagers - pivotCondition , before, on, after , between
  pivotDate is the date the pivotCondition will operate against.
 
+  August 14 - changed sport to sportID
+              added expirationDateiTime datetime , lifetime of  bet. If no resolution by this date/time, the bet is liquidated with no winner and loser 
+              added closeDateTime datetime , the point no more bets are accepted for the Game (changed from subscriptionClose datetime
+              the DB default are very restrictive for both of these fields. Expectation is the application will always transmit a value for these fields
+              changed wagerUnits from int to decimal(7,2)
+              subscriptionLimit - maximum number of people that are allowed to take the bet. Associated with limit of liability for the initiator. This is only applicable for a 1 -> Many bet 
+              numberOfSubscribers - number of acceptors of the bet/game. Adding this field obviates the need to calculate a more intensive select on go_gameSubscribers to get the adoption of the bet
+              *NOTE - mysql does not allow current_timestamp as default for a datetime field
 */
 drop table if exists go_games
 //
@@ -147,17 +184,21 @@ create table go_games (
    eventName varchar(50) null,
    wagerTypeID int  null default 0,
    wagerType varchar(255) null,
-   wagerUnits int not null default 1,
-   date timestamp null,
+   wagerUnits decimal(7,2)  not null default 1,
+   date datetime null,
    description varchar(255) null,
    type  int not null default 0,
    typeName  varchar(50) null ,
    pivotDate datetime null,
    pivotCondition varchar(10) null,
-   sport int not null default 0,
-   subscriptionClose timestamp null,
+   sportID int not null default 0,
+   sportName varchar(50) null,
+   closeDateTime datetime not null default '0000-00-00 00:00:00', 
+   expirationDateTime datetime not null default '0000-00-00 00:00:00' ,
    syndicationUrl varchar(255) not null,
-   subscriptionOpen boolean not null default true,
+   subscriptionLimit int not null default 0,
+   subscriptionOpen boolean not null default false,
+   numberOfSubscribers int not null default 0,
    createdDate timestamp not null default current_timestamp(),
    modifiedDate timestamp null,
    PRIMARY KEY(gameID)
@@ -195,8 +236,12 @@ create table go_publicgames (
    date timestamp null,
    description varchar(255) null,
    type  int not null default 0,
-   sport int not null default 0,
+   sportID int not null default 0,
+   sportName varchar(25) not null,
    leagueID int not null default 0,
+   leagueName varchar(25) not null,
+   season int null,
+   seasonWeek int null,
    createdDate timestamp not null default current_timestamp(),
    modifiedDate timestamp null,
    PRIMARY KEY (gameID),
@@ -270,11 +315,23 @@ drop table if exists go_teams_lu
 create table go_teams_lu (
   id int not null AUTO_INCREMENT,
   teamName varchar(50) not null,
+  teamNameNormalized varchar(50) not null,
+  teamLogoURL varchar(255) null,
   sportID int  not null default 0,
+  sportName varchar(50) not null,
+  stadiumName varchar(100) null,
+  stadiumAddress varchar(100) null,
+  stadiumAddress2 varchar(100) null,
+  stadiumCity varchar(75) null,
+  stadiumState varchar(50) null,
+  stadiumLatitude int not null default 0,
+  stadiumLongitude int not null default 0,
+  foursquareVenueID int null,
   createdDate timestamp not null default current_timestamp(),
   modifiedDate timestamp null,
   PRIMARY KEY(id),
-  UNIQUE INDEX(teamName)
+  unique index indx_teamnamenormalized (teamNameNormalized),
+  UNIQUE INDEX indx_teamname (teamName,sportID)
 )
 ENGINE=INNODB
 //

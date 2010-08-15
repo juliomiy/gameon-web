@@ -1,0 +1,483 @@
+0,26-10-2010,7:30 PM,Miami,Boston
+0,26-10-2010,10:00 PM,Phoenix,Portland
+0,26-10-2010,10:30 PM,Houston,LA Lakers
+0,27-10-2010,7:00 PM,Boston,Cleveland
+0,27-10-2010,7:00 PM,Detroit,New Jersey
+0,27-10-2010,7:00 PM,Miami,Philadelphia
+0,27-10-2010,7:00 PM,New York,Toronto
+0,27-10-2010,8:00 PM,Milwaukee,New Orleans
+0,27-10-2010,8:00 PM,Sacramento,Minnesota
+0,27-10-2010,8:00 PM,Chicago,Oklahoma City
+0,27-10-2010,8:00 PM,Atlanta,Memphis
+0,27-10-2010,8:30 PM,Charlotte,Dallas
+0,27-10-2010,8:30 PM,Indiana,San Antonio
+0,27-10-2010,9:00 PM,Utah,Denver
+0,27-10-2010,10:30 PM,Houston,Golden State 
+0,27-10-2010,10:30 PM,Portland,LA Clippers
+0,28-10-2010,8:00 PM,Washington,Orlando
+0,28-10-2010,10:30 PM,Phoenix,Utah
+0,29-10-2010,7:00 PM,Sacramento,New Jersey
+0,29-10-2010,7:00 PM,Atlanta,Philadelphia
+0,29-10-2010,7:00 PM,Cleveland,Toronto
+0,29-10-2010,7:00 PM,Indiana,Charlotte
+0,29-10-2010,7:30 PM,New York,Boston
+0,29-10-2010,8:00 PM,Denver,New Orleans
+0,29-10-2010,8:00 PM,Oklahoma City,Detroit
+0,29-10-2010,8:00 PM,Orlando,Miami
+0,29-10-2010,8:00 PM,Milwaukee,Minnesota
+0,29-10-2010,8:30 PM,Memphis,Dallas
+0,29-10-2010,10:30 PM,LA Clippers,Golden State 
+0,29-10-2010,10:30 PM,LA Lakers,Phoenix
+0,30-10-2010,7:00 PM,Washington,Atlanta
+0,30-10-2010,7:30 PM,Sacramento,Cleveland
+0,30-10-2010,7:30 PM,Portland,New York
+0,30-10-2010,8:00 PM,Detroit,Chicago
+0,30-10-2010,8:00 PM,Philadelphia,Indiana
+0,30-10-2010,8:00 PM,Minnesota,Memphis
+0,30-10-2010,8:30 PM,Denver,Houston
+0,30-10-2010,8:30 PM,Charlotte,Milwaukee
+0,30-10-2010,8:30 PM,New Orleans,San Antonio
+0,31-10-2010,1:00 PM,Miami,New Jersey
+0,31-10-2010,3:30 PM,Dallas,LA Clippers
+0,31-10-2010,7:00 PM,Utah,Oklahoma City
+0,31-10-2010,9:30 PM,Golden State,LA Lakers
+0,01-11-2010,8:00 PM,Portland,Chicago
+0,01-11-2010,10:00 PM,Toronto,Sacramento
+0,01-11-2010,10:30 PM,San Antonio,LA Clippers
+0,02-11-2010,7:00 PM,Atlanta,Cleveland
+0,02-11-2010,7:00 PM,Philadelphia,Washington
+0,02-11-2010,7:30 PM,Boston,Detroit
+0,02-11-2010,7:30 PM,Minnesota,Miami
+0,02-11-2010,7:30 PM,Orlando,New York
+0,02-11-2010,8:00 PM,Portland,Milwaukee
+0,02-11-2010,10:30 PM,Memphis,LA Lakers
+0,03-11-2010,7:00 PM,Detroit,Atlanta
+0,03-11-2010,7:00 PM,Charlotte,New Jersey
+0,03-11-2010,7:00 PM,Minnesota,Orlando
+0,03-11-2010,7:00 PM,Indiana,Philadelphia
+0,03-11-2010,8:00 PM,Milwaukee,Boston
+0,03-11-2010,8:30 PM,New Orleans,Houston
+0,03-11-2010,9:00 PM,Dallas,Denver
+0,03-11-2010,9:00 PM,Toronto,Utah
+0,03-11-2010,10:00 PM,San Antonio,Phoenix
+0,03-11-2010,10:30 PM,Memphis,Golden State 
+0,03-11-2010,10:30 PM,Oklahoma City,LA Clippers
+0,03-11-2010,10:30 PM,LA Lakers,Sacramento
+0,04-11-2010,8:00 PM,New York,Chicago
+0,04-11-2010,10:30 PM,Oklahoma City,Portland
+0,05-11-2010,7:00 PM,Milwaukee,Indiana
+0,05-11-2010,7:00 PM,New Jersey,Orlando
+0,05-11-2010,7:00 PM,Cleveland,Philadelphia
+0,05-11-2010,7:30 PM,Charlotte,Detroit
+0,05-11-2010,7:30 PM,Washington,New York
+0,05-11-2010,8:00 PM,Chicago,Boston
+0,05-11-2010,8:00 PM,Miami,New Orleans
+0,05-11-2010,8:00 PM,Atlanta,Minnesota
+0,05-11-2010,10:00 PM,Memphis,Phoenix
+0,05-11-2010,10:30 PM,LA Clippers,Denver
+0,05-11-2010,10:30 PM,Utah,Golden State 
+0,05-11-2010,10:30 PM,Toronto,LA Lakers
+0,06-11-2010,7:00 PM,Cleveland,Washington
+0,06-11-2010,7:00 PM,Orlando,Charlotte
+0,06-11-2010,7:30 PM,New Jersey,Miami
+0,06-11-2010,8:30 PM,New Orleans,Milwaukee
+0,06-11-2010,8:30 PM,Houston,San Antonio
+0,06-11-2010,9:00 PM,Denver,Dallas
+0,06-11-2010,9:00 PM,LA Clippers,Utah
+0,06-11-2010,10:00 PM,Toronto,Portland
+0,06-11-2010,10:00 PM,Memphis,Sacramento
+0,07-11-2010,12:00 PM,Philadelphia,New York
+0,07-11-2010,5:00 PM,Phoenix,Atlanta
+0,07-11-2010,6:00 PM,Golden State,Detroit
+0,07-11-2010,7:00 PM,Minnesota,Houston
+0,07-11-2010,7:00 PM,Boston,Oklahoma City
+0,07-11-2010,9:30 PM,Portland,LA Lakers
+0,08-11-2010,7:00 PM,Atlanta,Orlando
+0,08-11-2010,7:00 PM,Golden State,Toronto
+0,08-11-2010,7:00 PM,San Antonio,Charlotte
+0,08-11-2010,8:00 PM,Denver,Chicago
+0,08-11-2010,8:00 PM,Phoenix,Memphis
+0,08-11-2010,8:30 PM,Boston,Dallas
+0,09-11-2010,7:00 PM,Denver,Indiana
+0,09-11-2010,7:00 PM,Cleveland,New Jersey
+0,09-11-2010,7:30 PM,Utah,Miami
+0,09-11-2010,8:00 PM,LA Clippers,New Orleans
+0,09-11-2010,8:00 PM,New York,Milwaukee
+0,09-11-2010,10:00 PM,Detroit,Portland
+0,09-11-2010,10:30 PM,Minnesota,LA Lakers
+0,10-11-2010,7:00 PM,Milwaukee,Atlanta
+0,10-11-2010,7:00 PM,Utah,Orlando
+0,10-11-2010,7:00 PM,Houston,Washington
+0,10-11-2010,7:00 PM,Charlotte,Toronto
+0,10-11-2010,7:30 PM,New Jersey,Cleveland
+0,10-11-2010,7:30 PM,Golden State,New York
+0,10-11-2010,8:00 PM,Philadelphia,Oklahoma City
+0,10-11-2010,8:00 PM,Dallas,Memphis
+0,10-11-2010,9:30 PM,LA Clippers,San Antonio
+0,10-11-2010,10:00 PM,Minnesota,Sacramento
+0,11-11-2010,8:00 PM,Golden State,Chicago
+0,11-11-2010,8:00 PM,Boston,Miami
+0,11-11-2010,10:30 PM,LA Lakers,Denver
+0,12-11-2010,7:00 PM,Utah,Atlanta
+0,12-11-2010,7:00 PM,Houston,Indiana
+0,12-11-2010,7:00 PM,Toronto,Orlando
+0,12-11-2010,7:00 PM,Charlotte,Washington
+0,12-11-2010,8:00 PM,New York,Minnesota
+0,12-11-2010,8:30 PM,Philadelphia,Dallas
+0,12-11-2010,9:00 PM,Sacramento,Phoenix
+0,12-11-2010,9:30 PM,Portland,Oklahoma City
+0,12-11-2010,10:30 PM,Detroit,LA Clippers
+0,13-11-2010,7:00 PM,Orlando,New Jersey
+0,13-11-2010,7:00 PM,Utah,Charlotte
+0,13-11-2010,7:30 PM,Indiana,Cleveland
+0,13-11-2010,7:30 PM,Toronto,Miami
+0,13-11-2010,8:00 PM,Portland,New Orleans
+0,13-11-2010,8:00 PM,Washington,Chicago
+0,13-11-2010,8:00 PM,Boston,Memphis
+0,13-11-2010,8:30 PM,Golden State,Milwaukee
+0,13-11-2010,8:30 PM,Philadelphia,San Antonio
+0,14-11-2010,2:00 PM,Minnesota,Atlanta
+0,14-11-2010,6:00 PM,Detroit,Sacramento
+0,14-11-2010,7:00 PM,San Antonio,Oklahoma City
+0,14-11-2010,7:30 PM,Houston,New York
+0,14-11-2010,9:30 PM,Phoenix,LA Lakers
+0,15-11-2010,7:00 PM,Memphis,Orlando
+0,15-11-2010,7:00 PM,Minnesota,Charlotte
+0,15-11-2010,8:30 PM,New Orleans,Dallas
+0,15-11-2010,9:00 PM,Denver,Phoenix
+0,15-11-2010,9:00 PM,Oklahoma City,Utah
+0,15-11-2010,10:30 PM,Detroit,Golden State 
+0,15-11-2010,10:30 PM,New Jersey,LA Clippers
+0,16-11-2010,7:00 PM,Philadelphia,Cleveland
+0,16-11-2010,7:00 PM,Atlanta,Indiana
+0,16-11-2010,7:00 PM,Toronto,Washington
+0,16-11-2010,8:00 PM,LA Lakers,Milwaukee
+0,16-11-2010,8:00 PM,Portland,Memphis
+0,16-11-2010,8:30 PM,Chicago,Houston
+0,16-11-2010,9:00 PM,New York,Denver
+0,17-11-2010,7:00 PM,Phoenix,Miami
+0,17-11-2010,7:00 PM,Toronto,Philadelphia
+0,17-11-2010,7:30 PM,Washington,Boston
+0,17-11-2010,7:30 PM,LA Lakers,Detroit
+0,17-11-2010,8:00 PM,Dallas,New Orleans
+0,17-11-2010,8:00 PM,LA Clippers,Minnesota
+0,17-11-2010,8:00 PM,Houston,Oklahoma City
+0,17-11-2010,9:00 PM,New Jersey,Utah
+0,17-11-2010,9:30 PM,Chicago,San Antonio
+0,17-11-2010,10:00 PM,New York,Sacramento
+0,18-11-2010,7:00 PM,LA Clippers,Indiana
+0,18-11-2010,8:00 PM,Phoenix,Orlando
+0,18-11-2010,10:30 PM,Denver,Portland
+0,19-11-2010,7:00 PM,Oklahoma City,Boston
+0,19-11-2010,7:00 PM,Milwaukee,Philadelphia
+0,19-11-2010,7:00 PM,Memphis,Washington
+0,19-11-2010,7:00 PM,Houston,Toronto
+0,19-11-2010,7:30 PM,Charlotte,Miami
+0,19-11-2010,8:00 PM,Cleveland,New Orleans
+0,19-11-2010,8:00 PM,LA Lakers,Minnesota
+0,19-11-2010,9:00 PM,San Antonio,Utah
+0,19-11-2010,9:30 PM,Chicago,Dallas
+0,19-11-2010,10:00 PM,New Jersey,Sacramento
+0,19-11-2010,10:30 PM,New York,Golden State 
+0,20-11-2010,7:00 PM,Orlando,Indiana
+0,20-11-2010,7:00 PM,Phoenix,Charlotte
+0,20-11-2010,8:00 PM,Dallas,Atlanta
+0,20-11-2010,8:00 PM,Miami,Memphis
+0,20-11-2010,8:30 PM,Oklahoma City,Milwaukee
+0,20-11-2010,8:30 PM,Cleveland,San Antonio
+0,20-11-2010,9:00 PM,New Jersey,Denver
+0,20-11-2010,10:00 PM,Utah,Portland
+0,20-11-2010,10:30 PM,New York,LA Clippers
+0,21-11-2010,1:00 PM,Boston,Toronto
+0,21-11-2010,6:00 PM,Washington,Detroit
+0,21-11-2010,6:00 PM,New Orleans,Sacramento
+0,21-11-2010,9:30 PM,Golden State,LA Lakers
+0,22-11-2010,7:00 PM,Boston,Atlanta
+0,22-11-2010,7:30 PM,Indiana,Miami
+0,22-11-2010,8:00 PM,Minnesota,Oklahoma City
+0,22-11-2010,8:30 PM,Phoenix,Houston
+0,22-11-2010,8:30 PM,Orlando,San Antonio
+0,22-11-2010,9:00 PM,Sacramento,Utah
+0,22-11-2010,10:30 PM,Denver,Golden State 
+0,22-11-2010,10:30 PM,New Orleans,LA Clippers
+0,23-11-2010,7:00 PM,Cleveland,Indiana
+0,23-11-2010,7:00 PM,Atlanta,New Jersey
+0,23-11-2010,7:00 PM,Philadelphia,Washington
+0,23-11-2010,7:30 PM,Charlotte,New York
+0,23-11-2010,8:30 PM,Detroit,Dallas
+0,23-11-2010,10:30 PM,Chicago,LA Lakers
+0,24-11-2010,7:00 PM,Milwaukee,Cleveland
+0,24-11-2010,7:00 PM,Philadelphia,Toronto
+0,24-11-2010,7:00 PM,New York,Charlotte
+0,24-11-2010,7:30 PM,New Jersey,Boston
+0,24-11-2010,7:30 PM,Miami,Orlando
+0,24-11-2010,8:00 PM,San Antonio,Minnesota
+0,24-11-2010,8:00 PM,Dallas,Oklahoma City
+0,24-11-2010,8:00 PM,Detroit,Memphis
+0,24-11-2010,8:30 PM,Golden State,Houston
+0,24-11-2010,9:00 PM,Chicago,Phoenix
+0,24-11-2010,9:00 PM,New Orleans,Utah
+0,25-11-2010,8:00 PM,Washington,Atlanta
+0,25-11-2010,10:30 PM,Sacramento,LA Clippers
+0,26-11-2010,7:00 PM,Cleveland,Orlando
+0,26-11-2010,7:00 PM,Houston,Charlotte
+0,26-11-2010,7:30 PM,Toronto,Boston
+0,26-11-2010,7:30 PM,Milwaukee,Detroit
+0,26-11-2010,7:30 PM,Philadelphia,Miami
+0,26-11-2010,8:00 PM,Oklahoma City,Indiana
+0,26-11-2010,8:30 PM,Dallas,San Antonio
+0,26-11-2010,9:00 PM,Chicago,Denver
+0,26-11-2010,9:00 PM,LA Clippers,Phoenix
+0,26-11-2010,9:00 PM,LA Lakers,Utah
+0,26-11-2010,9:30 PM,Golden State,Memphis
+0,26-11-2010,10:00 PM,New Orleans,Portland
+0,27-11-2010,1:00 PM,Atlanta,New York
+0,27-11-2010,7:00 PM,Orlando,Washington
+0,27-11-2010,7:30 PM,Memphis,Cleveland
+0,27-11-2010,7:30 PM,New Jersey,Philadelphia
+0,27-11-2010,8:00 PM,Golden State,Minnesota
+0,27-11-2010,8:30 PM,Miami,Dallas
+0,27-11-2010,9:00 PM,Charlotte,Milwaukee
+0,27-11-2010,10:00 PM,Chicago,Sacramento
+0,28-11-2010,1:00 PM,Atlanta,Toronto
+0,28-11-2010,1:30 PM,New York,Detroit
+0,28-11-2010,3:00 PM,San Antonio,New Orleans
+0,28-11-2010,3:30 PM,Utah,LA Clippers
+0,28-11-2010,7:00 PM,Oklahoma City,Houston
+0,28-11-2010,7:00 PM,Portland,New Jersey
+0,28-11-2010,8:00 PM,Phoenix,Denver
+0,28-11-2010,9:30 PM,Indiana,LA Lakers
+0,29-11-2010,7:30 PM,Washington,Miami
+0,29-11-2010,8:00 PM,New Orleans,Oklahoma City
+0,29-11-2010,8:30 PM,Houston,Dallas
+0,29-11-2010,9:00 PM,Milwaukee,Utah
+0,30-11-2010,7:00 PM,Boston,Cleveland
+0,30-11-2010,7:00 PM,Detroit,Orlando
+0,30-11-2010,7:00 PM,Portland,Philadelphia
+0,30-11-2010,7:30 PM,New Jersey,New York
+0,30-11-2010,8:00 PM,LA Lakers,Memphis
+0,30-11-2010,10:00 PM,Indiana,Sacramento
+0,30-11-2010,8:30 PM,San Antonio,Golden State 
+0,01-12-2010,7:00 PM,Memphis,Atlanta
+0,01-12-2010,7:00 PM,Oklahoma City,New Jersey
+0,01-12-2010,7:00 PM,Washington,Toronto
+0,01-12-2010,7:30 PM,Portland,Boston
+0,01-12-2010,7:30 PM,Detroit,Miami
+0,01-12-2010,8:00 PM,Charlotte,New Orleans
+0,01-12-2010,8:00 PM,Orlando,Chicago
+0,01-12-2010,8:30 PM,Minnesota,Dallas
+0,01-12-2010,8:30 PM,LA Lakers,Houston
+0,01-12-2010,9:00 PM,Milwaukee,Denver
+0,01-12-2010,9:00 PM,Indiana,Utah
+0,01-12-2010,10:30 PM,San Antonio,LA Clippers
+0,02-12-2010,8:00 PM,Miami,Cleveland
+0,02-12-2010,10:30 PM,Phoenix,Golden State 
+0,03-12-2010,7:00 PM,Portland,Washington
+0,03-12-2010,7:00 PM,Oklahoma City,Toronto
+0,03-12-2010,7:00 PM,New Jersey,Charlotte
+0,03-12-2010,7:30 PM,Philadelphia,Atlanta
+0,03-12-2010,7:30 PM,Orlando,Detroit
+0,03-12-2010,8:00 PM,Chicago,Boston
+0,03-12-2010,8:00 PM,New York,New Orleans
+0,03-12-2010,8:00 PM,Houston,Memphis
+0,03-12-2010,8:30 PM,Minnesota,San Antonio
+0,03-12-2010,9:00 PM,LA Clippers,Denver
+0,03-12-2010,9:00 PM,Indiana,Phoenix
+0,03-12-2010,10:30 PM,Sacramento,LA Lakers
+0,03-12-2010,10:30 PM,Dallas,Utah
+0,04-12-2010,7:30 PM,Atlanta,Miami
+0,04-12-2010,7:30 PM,Charlotte,Philadelphia
+0,04-12-2010,8:00 PM,Houston,Chicago
+0,04-12-2010,8:00 PM,Cleveland,Minnesota
+0,04-12-2010,8:30 PM,Orlando,Milwaukee
+0,04-12-2010,10:00 PM,Dallas,Sacramento
+0,05-12-2010,1:00 PM,Boston,New Jersey
+0,05-12-2010,1:00 PM,New York,Toronto
+0,05-12-2010,6:00 PM,Cleveland,Detroit
+0,05-12-2010,7:00 PM,New Orleans,San Antonio
+0,05-12-2010,7:00 PM,Golden State,Oklahoma City
+0,05-12-2010,8:00 PM,Memphis,Denver
+0,05-12-2010,8:00 PM,Washington,Phoenix
+0,05-12-2010,9:00 PM,LA Clippers,Portland
+0,06-12-2010,7:00 PM,Toronto,Indiana
+0,06-12-2010,7:00 PM,Atlanta,Orlando
+0,06-12-2010,7:30 PM,Minnesota,New York
+0,06-12-2010,8:00 PM,Oklahoma City,Chicago
+0,06-12-2010,8:00 PM,Miami,Milwaukee
+0,06-12-2010,9:00 PM,Memphis,Utah
+0,06-12-2010,10:30 PM,Sacramento,LA Clippers
+0,07-12-2010,7:00 PM,New Jersey,Atlanta
+0,07-12-2010,7:00 PM,Cleveland,Philadelphia
+0,07-12-2010,7:00 PM,Denver,Charlotte
+0,07-12-2010,8:30 PM,Golden State,Dallas
+0,07-12-2010,8:30 PM,Detroit,Houston
+0,07-12-2010,10:00 PM,Phoenix,Portland
+0,07-12-2010,10:30 PM,Washington,LA Lakers
+0,08-12-2010,7:00 PM,Denver,Boston
+0,08-12-2010,7:00 PM,Chicago,Cleveland
+0,08-12-2010,7:30 PM,Toronto,New York
+0,08-12-2010,8:00 PM,Detroit,New Orleans
+0,08-12-2010,8:00 PM,Indiana,Milwaukee
+0,08-12-2010,8:00 PM,Oklahoma City,Minnesota
+0,08-12-2010,8:30 PM,Golden State,San Antonio
+0,08-12-2010,9:00 PM,Memphis,Phoenix
+0,08-12-2010,9:00 PM,Miami,Utah
+0,08-12-2010,10:00 PM,Washington,Sacramento
+0,08-12-2010,10:30 PM,LA Lakers,LA Clippers
+0,09-12-2010,8:00 PM,Boston,Philadelphia
+0,09-12-2010,8:30 PM,New Jersey,Dallas
+0,09-12-2010,10:30 PM,Orlando,Portland
+0,10-12-2010,7:00 PM,Charlotte,Indiana
+0,10-12-2010,7:00 PM,New York,Washington
+0,10-12-2010,7:00 PM,Denver,Toronto
+0,10-12-2010,8:00 PM,Oklahoma City,New Orleans
+0,10-12-2010,8:00 PM,LA Lakers,Chicago
+0,10-12-2010,8:00 PM,Detroit,Minnesota
+0,10-12-2010,8:30 PM,Houston,Milwaukee
+0,10-12-2010,8:30 PM,Atlanta,San Antonio
+0,10-12-2010,9:00 PM,Portland,Phoenix
+0,10-12-2010,9:00 PM,Orlando,Utah
+0,10-12-2010,10:30 PM,Miami,Golden State 
+0,11-12-2010,3:30 PM,Memphis,LA Clippers
+0,11-12-2010,7:00 PM,Indiana,Atlanta
+0,11-12-2010,7:00 PM,Boston,Charlotte
+0,11-12-2010,7:30 PM,Toronto,Detroit
+0,11-12-2010,8:00 PM,Minnesota,Chicago
+0,11-12-2010,8:30 PM,Utah,Dallas
+0,11-12-2010,8:30 PM,Cleveland,Houston
+0,11-12-2010,10:00 PM,Miami,Sacramento
+0,12-12-2010,12:00 PM,Denver,New York
+0,12-12-2010,12:00 PM,New Orleans,Philadelphia
+0,12-12-2010,1:00 PM,LA Lakers,New Jersey
+0,12-12-2010,3:30 PM,Portland,San Antonio
+0,12-12-2010,7:00 PM,Cleveland,Oklahoma City
+0,12-12-2010,9:30 PM,Orlando,LA Clippers
+0,13-12-2010,7:30 PM,New Orleans,Miami
+0,13-12-2010,8:00 PM,Indiana,Chicago
+0,13-12-2010,8:00 PM,Portland,Memphis
+0,13-12-2010,8:30 PM,Milwaukee,Dallas
+0,13-12-2010,9:00 PM,Golden State,Utah
+0,14-12-2010,7:00 PM,Philadelphia,New Jersey
+0,14-12-2010,7:00 PM,LA Lakers,Washington
+0,14-12-2010,7:00 PM,Toronto,Charlotte
+0,14-12-2010,7:30 PM,Atlanta,Detroit
+0,14-12-2010,8:30 PM,Sacramento,Houston
+0,14-12-2010,9:00 PM,Orlando,Denver
+0,14-12-2010,10:30 PM,Minnesota,Golden State 
+0,15-12-2010,7:00 PM,LA Lakers,Indiana
+0,15-12-2010,7:00 PM,Boston,New York
+0,15-12-2010,7:00 PM,LA Clippers,Philadelphia
+0,15-12-2010,7:00 PM,Chicago,Toronto
+0,15-12-2010,7:30 PM,Cleveland,Miami
+0,15-12-2010,8:00 PM,Sacramento,New Orleans
+0,15-12-2010,8:00 PM,Houston,Oklahoma City
+0,15-12-2010,8:00 PM,Charlotte,Memphis
+0,15-12-2010,8:30 PM,Milwaukee,San Antonio
+0,15-12-2010,9:00 PM,Minnesota,Phoenix
+0,15-12-2010,9:30 PM,Portland,Dallas
+0,16-12-2010,7:00 PM,Washington,New Jersey
+0,16-12-2010,8:00 PM,Atlanta,Boston
+0,16-12-2010,10:30 PM,San Antonio,Denver
+0,17-12-2010,7:00 PM,Cleveland,Indiana
+0,17-12-2010,7:00 PM,Miami,New York
+0,17-12-2010,7:00 PM,LA Lakers,Philadelphia
+0,17-12-2010,7:00 PM,New Jersey,Toronto
+0,17-12-2010,7:30 PM,Charlotte,Atlanta
+0,17-12-2010,7:30 PM,LA Clippers,Detroit
+0,17-12-2010,8:00 PM,Utah,New Orleans
+0,17-12-2010,8:00 PM,Sacramento,Oklahoma City
+0,17-12-2010,8:30 PM,Memphis,Houston
+0,17-12-2010,9:30 PM,Phoenix,Dallas
+0,17-12-2010,10:00 PM,Minnesota,Portland
+0,18-12-2010,7:00 PM,Philadelphia,Orlando
+0,18-12-2010,7:00 PM,Miami,Washington
+0,18-12-2010,7:30 PM,New York,Cleveland
+0,18-12-2010,8:00 PM,LA Clippers,Chicago
+0,18-12-2010,8:30 PM,Utah,Milwaukee
+0,18-12-2010,8:30 PM,Memphis,San Antonio
+0,18-12-2010,9:00 PM,Minnesota,Denver
+0,18-12-2010,10:00 PM,Golden State,Portland
+0,19-12-2010,1:00 PM,Indiana,Boston
+0,19-12-2010,1:00 PM,Atlanta,New Jersey
+0,19-12-2010,1:00 PM,LA Lakers,Toronto
+0,19-12-2010,6:00 PM,New Orleans,Detroit
+0,19-12-2010,6:00 PM,Houston,Sacramento
+0,19-12-2010,7:00 PM,Phoenix,Oklahoma City
+0,20-12-2010,7:00 PM,Orlando,Atlanta
+0,20-12-2010,7:00 PM,Utah,Cleveland
+0,20-12-2010,7:00 PM,New Orleans,Indiana
+0,20-12-2010,7:00 PM,Charlotte,Washington
+0,20-12-2010,7:30 PM,Dallas,Miami
+0,20-12-2010,8:30 PM,Phoenix,San Antonio
+0,20-12-2010,10:00 PM,Milwaukee,Portland
+0,20-12-2010,10:30 PM,Houston,Golden State 
+0,20-12-2010,10:30 PM,Minnesota,LA Clippers
+0,21-12-2010,7:00 PM,Dallas,Orlando
+0,21-12-2010,7:00 PM,Oklahoma City,Charlotte
+0,21-12-2010,8:00 PM,Philadelphia,Chicago
+0,21-12-2010,8:00 PM,New Jersey,Memphis
+0,21-12-2010,10:00 PM,Golden State,Sacramento
+0,21-12-2010,10:30 PM,Milwaukee,LA Lakers
+0,22-12-2010,7:00 PM,Cleveland,Atlanta
+0,22-12-2010,7:00 PM,Chicago,Washington
+0,22-12-2010,7:00 PM,Detroit,Toronto
+0,22-12-2010,7:30 PM,Philadelphia,Boston
+0,22-12-2010,7:30 PM,Oklahoma City,New York
+0,22-12-2010,8:00 PM,New Jersey,New Orleans
+0,22-12-2010,8:00 PM,Utah,Minnesota
+0,22-12-2010,8:30 PM,Denver,San Antonio
+0,22-12-2010,10:30 PM,Houston,LA Clippers
+0,23-12-2010,8:00 PM,San Antonio,Orlando
+0,23-12-2010,10:00 PM,Milwaukee,Sacramento
+0,23-12-2010,10:30 PM,Miami,Phoenix
+0,25-12-2010,12:00 PM,Chicago,New York
+0,25-12-2010,2:30 PM,Boston,Orlando
+0,25-12-2010,5:00 PM,Miami,LA Lakers
+0,25-12-2010,8:00 PM,Denver,Oklahoma City
+0,25-12-2010,10:30 PM,Portland,Golden State 
+0,26-12-2010,3:00 PM,Phoenix,LA Clippers
+0,26-12-2010,6:00 PM,Minnesota,Cleveland
+0,26-12-2010,6:00 PM,Chicago,Detroit
+0,26-12-2010,7:00 PM,Atlanta,New Orleans
+0,26-12-2010,7:00 PM,Memphis,Indiana
+0,26-12-2010,7:00 PM,Washington,San Antonio
+0,26-12-2010,8:00 PM,Philadelphia,Denver
+0,27-12-2010,7:00 PM,Orlando,New Jersey
+0,27-12-2010,7:00 PM,Detroit,Charlotte
+0,27-12-2010,8:00 PM,Atlanta,Milwaukee
+0,27-12-2010,8:00 PM,New Orleans,Minnesota
+0,27-12-2010,8:00 PM,Dallas,Oklahoma City
+0,27-12-2010,8:00 PM,Toronto,Memphis
+0,27-12-2010,8:30 PM,Washington,Houston
+0,27-12-2010,9:00 PM,Portland,Utah
+0,27-12-2010,10:00 PM,LA Clippers,Sacramento
+0,27-12-2010,10:30 PM,Philadelphia,Golden State 
+0,28-12-2010,7:00 PM,Orlando,Cleveland
+0,28-12-2010,7:00 PM,Boston,Indiana
+0,28-12-2010,7:30 PM,New York,Miami
+0,28-12-2010,8:00 PM,Milwaukee,Chicago
+0,28-12-2010,8:30 PM,Toronto,Dallas
+0,28-12-2010,8:30 PM,LA Lakers,San Antonio
+0,28-12-2010,9:00 PM,Portland,Denver
+0,29-12-2010,7:00 PM,Golden State,Atlanta
+0,29-12-2010,7:00 PM,Indiana,Washington
+0,29-12-2010,7:00 PM,Cleveland,Charlotte
+0,29-12-2010,7:30 PM,Boston,Detroit
+0,29-12-2010,8:00 PM,LA Lakers,New Orleans
+0,29-12-2010,8:00 PM,Denver,Minnesota
+0,29-12-2010,8:00 PM,New Jersey,Oklahoma City
+0,29-12-2010,8:30 PM,Miami,Houston
+0,29-12-2010,9:00 PM,Philadelphia,Phoenix
+0,29-12-2010,10:00 PM,Memphis,Sacramento
+0,29-12-2010,10:30 PM,Utah,LA Clippers
+0,30-12-2010,7:00 PM,New York,Orlando
+0,30-12-2010,9:30 PM,San Antonio,Dallas
+0,30-12-2010,10:00 PM,Utah,Portland
+0,31-12-2010,3:00 PM,New Orleans,Boston
+0,31-12-2010,3:00 PM,New Jersey,Chicago
+0,31-12-2010,3:00 PM,Washington,Indiana
+0,31-12-2010,3:00 PM,Golden State,Charlotte
+0,31-12-2010,7:00 PM,Toronto,Houston
+0,31-12-2010,8:00 PM,Atlanta,Oklahoma City
+0,31-12-2010,9:00 PM,Detroit,Phoenix
+0,31-12-2010,10:30 PM,Philadelphia,LA Lakers
