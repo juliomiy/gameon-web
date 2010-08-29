@@ -12,6 +12,6 @@ require_once('config.class.php');
 ?>
 <body>
 <div id="goheader">
-<p class="logo"><h2><a href="<?php echo(Config::getRootDomain());?>">GameOn</a></h2><img src="<?php echo(Config::getLogoURL());?>"/></p>
+<p class="logo"><h2><a href="<?php echo(Config::getRootDomain());?>">GameOn</a></h2><img src="<?php echo(Config::getLogoURL());?>" width="75px" height="75px"/></p>
 </div>
 

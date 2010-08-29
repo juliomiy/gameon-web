@@ -56,6 +56,28 @@ insert into go_user (userName,privacy, bankBalance) values ('jittrjohn',false, 1
 //
 insert into go_user (userName,privacy, bankBalance) values ('jittrralph',false, 10000)
 //
+/* go_userDashboard
+   normalized table that aggregates user metrics using the application
+   keyed by the various manors of ascertaining a user's identity
+*/
+drop table if exists go_userDashboard
+//
+create table go_userDashboard (
+      userID integer primary key not null,
+      foursquareID varchar(50) null,
+      twitterID varchar(50) null,
+      facebookID varchar(50) null,
+      totalBets integer not null default 0,
+      totalBetsInitiated integer not null default 0,
+      totalBetsAccepted integer not null default 0,
+      totalWins integer not null default 0,
+      totalLoses integer not null default 0,
+      createdDate timestamp not null default current_timestamp(),
+      modifiedDate timestamp null
+)
+ENGINE=INNODB
+//
+
 /* social network attributes for a particular user
  * no new social network envisioned as part of GameOn but leveraging existing 
  * large engagement sites. Foursquare include because of it's evolving role in
@@ -96,6 +118,43 @@ ENGINE=INNODB
 //
 insert into go_userSettings (userID) values (1);
 //
+/* go_ActivityRewards_lu
+   equates Activity with a reward for imbibing in the activity
+   The considerationID is a lookup to the consideration Units 
+   for convenience, will also store the name of the consideration
+
+*/
+drop table if exists go_activityRewards
+//
+create table go_activityRewards (
+   activityID integer not null AUTO_INCREMENT,
+   activityName varchar(50) not null,
+   considerationID integer not null,
+   considerationName varchar(50) not null,
+   amount    decimal(7,2) not null default 0,
+   createdDate timestamp not null default current_timestamp(),
+   modifiedDate timestamp null,
+   PRIMARY KEY(activityID),  
+   UNIQUE INDEX(activityName)
+)
+ENGINE INNODB
+//	
+/* go_ConsiderationConversion
+*/
+drop table if exists go_considerationConversion
+//
+create table go_considerationConversion (
+   fromConsiderationID integer not null,
+   toConsiderationID integer not null,
+   fromConsiderationName varchar(50) not null,
+   toCOnsiderationName varchar(50) not null,
+   ratio decimal(4,3) not null default 0,
+   createdDate timestamp not null default current_timestamp(),
+   modifiedDate timestamp null,
+   PRIMARY KEY(fromConsiderationID,toConsiderationID)  
+)
+ENGINE INNODB
+//	
 /*
 go_userBank - 1:1 mapping between user record in go_users. Maintains top level balance information 
 for the user. 
@@ -226,7 +285,65 @@ create table go_gamesSubscribers (
 ENGINE INNODB
 //
 
+/* go_gameInvite
+   table will manage the invitations for a bet
+    inviteStatus - 0 for open to accepted bets, 1 = accepted , 2 = declined
+    privateFlag - 1 , only those that specific invitees can accept, 0 means open to all
+            current default for simplicity is OPEN (0)
+             2 is open with explicit invites to individuals
+    inviteKey - special alpha-numeric key that describes the nature of the invite
+    numberAccepted - numberrof people accepting invite. If it is a peer to peer the max is 1
+    numberDeclined- number of people declining invite. If it is a peer to peer the max is 1
+    gameID - key into go_games table which contains the definition of the bet
+*/
+drop table if exists  go_gameInvite
+//
+create table go_gameInvite (
+   gameID varchar(25) not null,
+   inviteKey varchar(255) not null,
+   privateFlag int not null default 0,
+   inviteStatus integer not null default 0,
+   numberAccepted integer not null default 0,
+   numberDeclined integer not null default 0,
+   createdDate timestamp not null default current_timestamp(),
+   modifiedDate timestamp null,
+   PRIMARY KEY( inviteKey )  
+)
+ENGINE INNODB
+//
+/* go_gameInvitePrivate is associated with the go_gameInvite Table
+   it is used for when there are explicit invites to a bet/game
+   instead of just a mass fully open invite for anyone that 
+   accepts the gameInvite Link
+
+   inviteType 1=email, 2=facebook, 3 = twitter, 4 = sms ,5 = BetSquared User,  0 = unknown would generally mean an error state
+   for email, a cron job will look for records where inviteSendDate is null and inviteType = 1
+
+   inviteAddress will use the address to send the invite to,
+   inviteAccepted 0 = no, 1 = yes, 2 = declined 
+   This is a normalized table which is 1 to many with go_games depending on explicit invites so it can get large quickly
+   but this design should suffice for the beginning
+*/
+drop table if exists go_gameInvitePrivate
+//
+create table go_gameInvitePrivate(
+   gameID varchar(25) not null,
+   inviteKey varchar(255) not null,
+   inviteAddress varchar(255) not null,
+   inviteType integer not null default 0,
+   inviteAccepted integer not null default 0,
+   inviteSendDate datetime null,
+   createdDate timestamp not null default current_timestamp(),
+   modifiedDate timestamp null,
+   PRIMARY KEY( gameID, inviteKey, inviteAddress  )  
+)
+ENGINE INNODB
+//
+
 /* listing of all public games - college and professional */
+* for convenience, since a large majority of public games will be 2 team sports, will denormalize team1 and team2 into
+this table folding in the keys to go_publicgames_combatants
+*/
 drop table if exists go_publicgames
 //
 create table go_publicgames (
@@ -240,6 +357,10 @@ create table go_publicgames (
    sportName varchar(25) not null,
    leagueID int not null default 0,
    leagueName varchar(25) not null,
+   team1ID integer not null default 0,
+   teamName1 varchar(50) ,
+   team2ID integer not null default 0,
+   teamName2 varchar(50) ,
    season int null,
    seasonWeek int null,
    createdDate timestamp not null default current_timestamp(),
@@ -319,6 +440,8 @@ create table go_teams_lu (
   teamLogoURL varchar(255) null,
   sportID int  not null default 0,
   sportName varchar(50) not null,
+  leagueName varchar(50) not null,
+  leagueID int  not null default 0,
   stadiumName varchar(100) null,
   stadiumAddress varchar(100) null,
   stadiumAddress2 varchar(100) null,

@@ -14,6 +14,11 @@ require_once('config.class.php');
 ?>
 <div id="gofooter">
 <p class="logofooter"><a href="<?php echo(Config::getRootDomain());?>">GameOn</a></p>
+<p> * Copyright &copy; 2010 Jittr, Inc. All rights reserved. Registration on or use of this site constitutes acceptance of our <a href="<?php echo(Config::getRootDomain());?>/gotos.php" target="_blank">Terms of Service</a> and <a href="<?php echo(Config::getRootDomain());?>/goprivacypolicy.php">Privacy Policy</a>. <span class="pipe">|</span> <a href="<?php echo(Config::getRootDomain());?>/godisclaimer.php" target="_blank">Disclaimer</a>
+</p>
+<p class="contributions">
+   Design by <a href="http://www.jittr.com/about" target="_blank">Jittr, Inc.</a> <span class="pipe">|</span> Powered by <a href="http://www.mongodb.org">MongoDB</a> <span class="pipe">|</span> Hosted by <a href="http://www.dreamhost.com" target="_blank">Dreamhost</a> <span class="pipe">|</span> Web analytics by  <a href="http://www.empiricalpath.com/offer?utm_source=bi&utm_medium=partner&utm_content=footer&utm_campaign=audit">Google Analytics</a>
+</p>
 </div>
 <?php
 echo ('<script type="text/javascript" src="' . Config::getJSlib() . '"/>');

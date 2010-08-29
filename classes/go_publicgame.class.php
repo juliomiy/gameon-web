@@ -1,6 +1,8 @@
 <?php
+include('.gobasicdefines.php');
 $include_path=ini_get('include_path');
-ini_set('include_path','/home/juliomiyares/jittr.com/jittr/gameon/classes' . ':' . $include_path);
+ini_set('include_path',INI_PATH . ':' . $include_path);
+
 require_once('config.class.php');
 require_once('go_usersettings.class.php');
 
@@ -10,13 +12,22 @@ require_once('go_usersettings.class.php');
    TODO: Return xml and other formats ie json 
    TODO: currently use normalized table necessitating joins - ok for now but won't scale properly,
          Not using Denormalized just yet
+   TODO: update toXML return to include new fields added August 19,2010
+   Modified: by Julio Hernandez-Miyares August 19,2010
+    add additional fields for public Games
 */
-class goPublicgame {
+class goPublicGame {
    private $gameID;
    private $title;
    private $description;
    private $eventName;
    private $eventDate;
+/*Added for public Games - by JHM August 19,2010*/
+   private $team1ID;
+   private $team2ID;
+   private $teamName1;
+   private $teamName2;
+/* end of additions */
    private $typeID;
    private $type;
    private $sportID;
@@ -50,6 +61,34 @@ class goPublicgame {
    public function getGameID() {
       return $this->gameID;
    }
+  public function getHomeTeamID() {
+       return $this->team1ID;
+   }
+   public function getVisitingTeamID() {
+       return $this->team2ID;
+   }
+
+   public function getHomeTeam() {
+       return $this->teamName1;
+   }
+   public function getVisitingTeam() {
+       return $this->teamName2;
+   }
+
+   public function setHomeTeamID($in) {
+       $this->team1ID=$in;
+   }
+   public function setVisitingTeamID($in) {
+       $this->team2ID=$in;
+   }
+
+   public function setHomeTeam($in) {
+       $this->teamName1=$in;
+   }
+   public function setVisitingTeam($in) {
+       $this->teamName2=$in;
+   }
+
    public function getTitle() {
       return $this->title;
    }
@@ -138,15 +177,16 @@ class goPublicgame {
       $link = @mysqli_connect(Config::getDatabaseServer(),Config::getDatabaseUser(), Config::getDatabasePassword(),Config::getDatabase());
       if (!$link) mydie("Error connecting to Database");
 
-      $sql=sprintf("select g.*,t.typeName,s.sportName, l.leagueName from go_publicgames g LEFT JOIN go_types_lu t on g.type=t.id LEFT JOIN  go_sports_lu s on g.sport=s.id LEFT JOIN go_leagues_lu l on g.leagueID = l.id where g.gameID='%u'", mysqli_real_escape_string($link,$gameID));
+      $sql=sprintf("select g.*,t.typeName,s.sportName, l.leagueName from go_publicgames g LEFT JOIN go_types_lu t on g.type=t.id LEFT JOIN  go_sports_lu s on g.sportID=s.id LEFT JOIN go_leagues_lu l on g.leagueID = l.id where g.gameID='%u'", mysqli_real_escape_string($link,$gameID));
       if (Config::getDebug()) $this->LOG->log("$sql",PEAR_LOG_INFO);
 
       $cursor=@mysqli_query($link,$sql);
       if (!$cursor) $this->mydie(mysqli_error($link),$link);
       if (Config::getDebug()) $this->LOG->log($row,PEAR_LOG_DEBUG);
       $row = @mysqli_fetch_assoc($cursor);
-      if (!$row) return false;
-
+      if (!$row) { 
+         return false;
+      } //if
       $this->setGameID($row['gameID']);
       $this->setDescription($row['description']);
       $this->setTitle($row['title']);
@@ -162,8 +202,28 @@ class goPublicgame {
    //a little cleanup for properties that may be empty
       if (empty($this->eventName)) $this->setEventName($this->getTitle());
       if (empty($this->description)) $this->setDescription($this->getTitle());
-
+      $rc = $this->getPublicGameCombatants($gameID,$link);
+      return $rc;
    }
+
+/* for now, assume 2 team games */
+   private function getPublicGameCombatants($gameID,$link=null) {
+      if (empty($link)) return false;
+      $sql = "select g.teamID,t.teamName, g.homeTeam from go_publicgames_combatants g LEFT JOIN go_teams_lu t on g.teamID = t.id where gameID = $gameID order by g.homeTeam desc";
+      if (Config::getDebug()) $this->LOG->log($sql,PEAR_LOG_DEBUG);
+      $cursor=@mysqli_query($link,$sql);
+      if (!$cursor) $this->mydie(mysqli_error($link),$link);
+      if (mysqli_num_rows($cursor) != 2) return false;
+      $row = @mysqli_fetch_assoc($cursor);
+/*Add JHM - public Games */
+      $this->setHomeTeamID($row['teamID']);
+      $this->setHomeTeam($row['teamName']);
+      $row = @mysqli_fetch_assoc($cursor);
+      $this->setVisitingTeamID($row['teamID']);
+      $this->setVisitingTeam($row['teamName']);
+/*Finish add */
+      return true;
+   } //getPublicGameCombatants
 
    private function mydie($message,$link=null) {
       $this->LOG->log("$message",PEAR_LOG_ERR);
@@ -191,6 +251,8 @@ class goPublicgame {
      $xml .=Utility::emitXML($this->getEventName(),"eventname");
      $xml .=Utility::emitXML($this->getEventDate(),"eventdate");
      $xml .=Utility::emitXML($this->getDescription(),"description");
+     $xml .=Utility::emitXML($this->getHomeTeam(),"hometeam");
+     $xml .=Utility::emitXML($this->getVisitingTeam(),"visitingteam");
      $xml .=Utility::emitXML($this->getTypeName(),"type");
      $xml .=Utility::emitXML($this->getSportName(),"sport");
      $xml .=Utility::emitXML($this->getLeagueName(),"league");

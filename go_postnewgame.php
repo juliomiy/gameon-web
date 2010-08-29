@@ -6,6 +6,10 @@ ob_start();
    using GET instead of POST even though these represent changes to the Database
    added call to set the subscriptionClose date/time in case theuser did not explicitly set one
    added code to syndicate to user's social network starting with twitter first - initially will be full broadcast to your followers
+   Modified: August 16,2010 by Julio Hernandez-Miyares
+      after successfully adding the new game in go_games , add the record(s) to the 
+      go_gameInvite table. This table will manage game/bet invites
+
    TODO - add twitter direct tweet
    TODO - add twitter tweet to user list
 */
@@ -88,13 +92,15 @@ if (!$link)
    mydie("Error connecting to Database");
 }
 //grab unique id for game
-$gameID=Utility::generateUniqueIDKey('GAMEID');
+$gameID     = Utility::generateUniqueIDKey('GAMEID');
+$gameInviteKey = Utility::generateGameInvite('GAMEID');
+
 //if not set or empty, calculare default subscriptionClose date/time
 //TODO -currently defaulting to a Wager of type "date" driven - 
 if (empty($subscriptionClose)) {
    $pivotDateObj = new DateTime($pivotDate,new DateTimeZone('America/New_York'));
    $subscriptionCloseObj = Game::getDefaultSubscriptionClose($typeName, $pivotDateObj);
-   if ($subscriptionCloseObj) $subscriptionClose=$subscriptionCloseObj->format("Y-m-d:h:i:s");
+   if ($subscriptionCloseObj) $subscriptionClose=$subscriptionCloseObj->format("Y-m-d h:i:s");
 }
 //grab the shortened subscription url for the wager.
 $rc = Utility::shortenUrl("http://jittr.com/jittr/gameon/gogame.php/" . urlencode("?gameid=" . $gameID . "&createdbyuserid=" . $createdByUserID));
@@ -102,7 +108,7 @@ if (Config::getDebug()) $LOG->log("status code " . $rc->status_code,PEAR_LOG_INF
 if ($rc->status_code == 200) {
     $syndicationUrl= $rc->data->url;
 }
-$sql=sprintf("insert into go_games (gameID,createdByUserID,createdByUserName,title,eventName,date,description,type,typeName,pivotDate,pivotCondition,sport,subscriptionClose,syndicationUrl,wagerType,wagerUnits) values ('%s','%u','%s','%s','%s','%s','%s','%u','%s','%s','%s','%s','%s','%s','%s','%u')",
+$sql=sprintf("insert into go_games (gameID,createdByUserID,createdByUserName,title,eventName,date,description,type,typeName,pivotDate,pivotCondition,sportID,closeDateTime,syndicationUrl,wagerType,wagerUnits) values ('%s','%u','%s','%s','%s','%s','%s','%u','%s','%s','%s','%s','%s','%s','%s','%u')",
         mysqli_real_escape_string($link,$gameID),
         mysqli_real_escape_string($link,$createdByUserID),
         mysqli_real_escape_string($link,$createdByUserName),
@@ -127,6 +133,8 @@ if (!$rc) {
    header('HTTP/1.1 500 Internal Server Error');
    mydie(mysqli_error($link));
 }
+insertGameInvites($link,$gameID,$gameInviteKey);
+
 //Twitter syndication
 $twitter = new EpiTwitter(Config::getTwitterConsumerKey(),Config::getTwitterConsumerKeySecret(), $userSettings->getTwitterOAuthToken(), $userSettings->getTwitterOAuthTokenSecret());
 if ($twitter) {
@@ -144,15 +152,37 @@ Utility::emitXML("","insert_game",0);
 ob_end_flush();
 
 exit;
+/* insert gameInvites into go_gameInvite table
+*/
+function insertGameInvites($link,$gameID, $inviteKey) {
+  global $LOG;
+  $sql=sprintf("insert into go_gameInvite (gameID,inviteKey) values ('%s','%s')",
+        mysqli_real_escape_string($link,$gameID),
+        mysqli_real_escape_string($link,$inviteKey)
+    );
+  if (Config::getDebug()) $LOG->log("$sql",PEAR_LOG_INFO);
+  $rc = mysqli_query($link,$sql); 
+  if (!$rc) {
+   // Server error
+     header('HTTP/1.1 500 Internal Server Error');
+     mydie(mysqli_error($link));
+  }
+} // insert GameInvites
 
 function mydie($message) {
-global $LOG;
-Utility::emitXML("","insert_game",0);
-Utility::emitXML("500","status_code");
-Utility::emitXML("$message","status_message");
-Utility::emitXML("","insert_game",0);
-ob_end_flush();
-$LOG->log("$message",PEAR_LOG_ERR);
-exit;
+  global $LOG;
+  $LOG->log("$message",PEAR_LOG_ERR);
+  ob_end_clean();
+  if (isset($link)) $link->close();
+  
+  ob_start();
+  header("Content-Type: text/xml");
+
+  Utility::emitXML("","insert_game",0);
+   Utility::emitXML("500","status_code");
+   Utility::emitXML("$message","status_message");
+  Utility::emitXML("","insert_game",0);
+  ob_end_flush();
+  exit;
 }
 ?>

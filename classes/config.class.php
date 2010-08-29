@@ -20,8 +20,9 @@ require_once('Log.php');
  */
 class Config {
     //put your code here
-    const FAVICONURL="favicon-1.ico";
-    const LOGOURL="jittr_logo.png";
+    const FAVICONURL="favicon-2.ico";
+    //const LOGOURL="jittr_logo.png";
+    const LOGOURL="betsquared.png";
     const  JSLIB = "http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js";
     const APPJS="gameon.js";
     const COMMONCSS = "common.css";
@@ -43,6 +44,7 @@ class Config {
 //API settings
     const API_DOMAIN="http://jittr.com/jittr/gameon";
     const ROOT_DOMAIN="http://jittr.com/jittr/gameon";
+    const ERROR_PAGE =  "/goerror.php";
     const SITEKEY ="GAMEON";
 //Oauth Settings for various Social Networks
     const FOURSQUARE_CONSUMERKEY="AROV4OCBZMPAMSHLCF3LLYWQQ0W0F2WH1K1BDZDGBW1OFJSM";
@@ -77,6 +79,10 @@ class Config {
     /* returns the application specific Javascript file */
     public static function getJSLibApp() {
        return self::SCRIPTDIR . "/" . self::APPJS;
+    }
+
+    public static function getErrorPage() {
+       return self::ROOT_DOMAIN . self::ERROR_PAGE;
     }
 
     public static function getRootDomain() {

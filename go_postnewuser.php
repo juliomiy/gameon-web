@@ -5,9 +5,14 @@ ob_start();
    Purpose: insert new  user and optional settings in go_user and go_userSettings
    using GET instead of POST even though these represent changes to the Database
    TODO: Change to POST 
+   Modified: by Julio Hernandez-Miyares on August 22,2010
+    make newUserName mandatory to be able to insert a new user record 
+    check that newUserName is available
 */
+include('.gobasicdefines.php');
 $include_path=ini_get('include_path');
-ini_set('include_path','/home/juliomiyares/jittr.com/jittr/gameon/classes' . ':' . $include_path);
+ini_set('include_path',INI_PATH . ':' . $include_path);
+
 require_once('config.class.php');
 require_once('goutility.class.php');
 /* retrieve query parameters
@@ -85,7 +90,6 @@ header("Content-Type: text/xml");
    the new userID returned.
 */
 if (empty($primaryNetworkName)) {
-   header('HTTP/1.1 500 Internal Server Error');
    mydie("Query parameters missing");
 }
 //Implement transactional semantics - the insert into go_user and go_userSettings need to be atomic
@@ -97,9 +101,13 @@ $link = mysqli_connect(Config::getDatabaseServer(),Config::getDatabaseUser(), Co
 if (!$link)
 {
    // Server error
-   header('HTTP/1.1 500 Internal Server Error');
    mydie("Error connecting to Database");
 }
+//check if the userName is available
+if (!userNameAvailable($newUserName,$link)) {
+   mydie("UserName $newUserName not available",410);
+} //if
+ 
 //define insert sql  into go_user
 $sql = sprintf("insert into go_user (userName,primaryNetworkName,password) values ('%s','%s','%s')",
         mysqli_real_escape_string($link,$newUserName),
@@ -110,7 +118,6 @@ if (Config::getDebug()) $LOG->log("$sql",PEAR_LOG_INFO);
 $rc = mysqli_query($link,$sql); 
 if (!$rc) {
    // Server error
-   header('HTTP/1.1 500 Internal Server Error');
    mydie(mysqli_error($link));
 }
 if (($tempuserID = mysqli_insert_id($link)) > 0) {
@@ -136,7 +143,6 @@ if (Config::getDebug()) $LOG->log("$sql",PEAR_LOG_INFO);
 $rc = mysqli_query($link,$sql); 
 if (!$rc) {
    // Server error
-   header('HTTP/1.1 500 Internal Server Error');
    mydie(mysqli_error($link));
 }
 
@@ -153,17 +159,49 @@ Utility::emitXML("","insert_user",0);
 ob_end_flush();
 
 exit;
+/* Check if the requested userName is available.
+   Return True if the userName is available, false otherwise
+*/
+function userNameAvailable($userName,$link) {
 
-function mydie($message) {
+   global $LOG;
+   $userName = strtolower($userName);
+//   $sql = sprintf("select count(*) as countOfUserName from go_user where userName = '%s'",
+//        mysqli_real_escape_string($link,$userName));
+   $sql = sprintf("select userName from go_user where userName = '%s'",
+        mysqli_real_escape_string($link,$userName));
+ 
+   if (Config::getDebug()) $LOG->log("$sql",PEAR_LOG_INFO);
+   $cursor = mysqli_query($link,$sql); 
+   if (!$cursor) {
+   // Server error
+      mydie(mysqli_error($link) . "  executing sql $sql");
+   } //if
+   $countOfUserName = $cursor->num_rows; 
+//   if ($row = @mysqli_fetch_assoc($cursor) == null) mydie(mysqli_error($link) . " executing sql $sql");
+//   $countOfUserName = $row['countOfUserName'];
+   $cursor->close();
+   if ($countOfUserName > 0 ) return false;
+   else return true;
+
+} //userNameExists
+
+function mydie($message,$statusCode=500) {
 global $LOG;
 global $link;
-if ($link) $link->close();
-Utility::emitXML("","insert_user",0);
-Utility::emitXML("500","status_code");
-Utility::emitXML("$message","status_message");
-Utility::emitXML("","insert_user",0);
-ob_end_flush();
-$LOG->log("$message",PEAR_LOG_ERR);
-exit;
-}
+//   ob_end_clean();
+   if ($link) $link->close();
+   $LOG->log("$message",PEAR_LOG_ERR);
+
+//   ob_start();
+   header("Content-Type: text/xml");
+   header('HTTP/1.1 $statusCode Internal Server Error');
+   Utility::emitXML("","insert_user",0);
+   Utility::emitXML("$statusCode","status_code");
+   Utility::emitXML("$message","status_message");
+   Utility::emitXML("","insert_user",0);
+   ob_end_flush();
+
+   exit;
+} //mydie
 ?>

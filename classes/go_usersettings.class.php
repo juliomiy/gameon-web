@@ -1,16 +1,23 @@
 <?php
+include('.gobasicdefines.php');
 $include_path=ini_get('include_path');
-ini_set('include_path','.:/home/juliomiyares/jittr.com/jittr/gameon/classes' . ':' . $include_path);
+ini_set('include_path',INI_PATH . ':' . $include_path);
+
 require_once('config.class.php');
 require_once('goutility.class.php');
 
 /* Author: Julio Hernandez-Miyares
    Date: MAy 7th 2010
    Purpose: class object for userSettings 
+   Modified: by Julio Hernandez-Miyares
+   Date: August 24,2010 - added additional class properties
 */
 class goUserSettings {
   private $userID;
   private $userName;
+  private $firstName;
+  private $lastName;
+  private $email;
   private $facebookUserID;
   private $twitterUserID;
   private $foursquareUserID;
@@ -28,17 +35,41 @@ class goUserSettings {
   private $facebookProfileImageUrl;
   private $LOG;
   private $outputFlag;
+  private $lastCode;
+  private $lastMessage;
 
   public function __construct() {
        $this->LOG = Config::getLogObject();
        if (func_num_args()) {
-         $userID = func_get_arg(0);
-         $this->getUserSettings($userID);
-       }
-  }
+          $params = func_get_arg(0);
+          if (is_array($params)) {
+              $userID = $params['userid'];
+              $userName = $params['username'];
+              $parameter = (empty($userName) ? $userID : $userName);
+          } //if
+          else
+            $parameter = func_get_arg(0);
+         $found= $this->getUserSettings($parameter,(($userName) ? true : false));
+         if ($found) {
+            $this->lastCode = 200;
+            $this->lastMessage="Ok";
+         } else {
+            $this->lastCode = "410";
+            $this->lastMessage = "User Not Found";
+         }
+       }//if
+  } //constructor
 
 /* determines the type of output returned by _toString. currently one supported is xml
 */
+  public function getLastCode() {
+      return $this->lastCode;
+  }
+
+  public function getLastMessage() {
+      return $this->lastMessage;
+  }
+
   public function setOutputFlag($in) {
       $this->outputFlag=$in;
   }
@@ -57,6 +88,30 @@ class goUserSettings {
 
   public function getUserName() {
       return $this->userName;
+  }   
+
+  public function getFirstName() {
+      return $this->firstName;
+  }   
+
+  public function setFirstName($in) {
+      $this->firstName = $in;
+  }   
+
+  public function getLastName() {
+      return $this->lastName;
+  }   
+
+  public function setLastName($in) {
+      $this->lastName = $in;
+  }   
+
+  public function getEmail() {
+      return $this->email;
+  }   
+
+  public function setEmail($in) {
+      $this->email = $in;
   }   
 
   public function isDefaultFacebook() {
@@ -213,11 +268,12 @@ class goUserSettings {
 
      if (Config::getDebug()) Config::getLogObject()->log("$sql",PEAR_LOG_INFO);
      $cursor=@mysqli_query($link,$sql);
-     if (!$cursor) die(mysqli_error($link));
+     if (!$cursor) $this->mydie(mysqli_error($link) . " executing sql %sql",$link);
      $row = @mysqli_fetch_assoc($cursor);
      if ($row) {
         $userID = $row['userID'];
      }
+     $cursor->close(); 
      $link->close(); 
      
      if (Config::getDebug()) Config::getLogObject()->log("Value of userID = $userID");
@@ -227,21 +283,25 @@ class goUserSettings {
   */
   public function getUserSettings($user,$isName=null) {
 
+     $rv = false;   //default to not found
      $link = mysqli_connect(Config::getDatabaseServer(),Config::getDatabaseUser(), Config::getDatabasePassword(),Config::getDatabase());
-     if (!$link) die("Error connecting to Database");
+     if (!$link) $this-mydie("Error connecting to Database");
        
      if (empty($isName)) //retrieve by userID
-        $sql=sprintf("select g.userName,s.* from go_user g, go_userSettings s where g.userID='%s' and g.userID=s.userID ",mysqli_real_escape_string($link,$user));
+        $sql=sprintf("select g.*,s.* from go_user g, go_userSettings s where g.userID='%s' and g.userID=s.userID ",mysqli_real_escape_string($link,$user));
      else  //retrieve by userName
-        $sql=sprintf("select g.userName,s.* from go_user g, go_userSettings s where g.userName='%s' and g.userID=s.userID ",mysqli_real_escape_string($link,$user));
+        $sql=sprintf("select g.*,s.* from go_user g, go_userSettings s where g.userName='%s' and g.userID=s.userID ",mysqli_real_escape_string($link,$user));
   
      if (Config::getDebug()) $this->LOG->log("$sql",PEAR_LOG_INFO);
      $cursor=mysqli_query($link,$sql);
-     if (!$cursor) die(mysqli_error($link));
+     if (!$cursor) $this->mydie(mysqli_error($link) . " executing sql $sql",$link);
      $row = mysqli_fetch_assoc($cursor);
      if ($row) {
         $this->setUserID($row['userID']); 
         $this->setUserName($row['userName']); 
+        $this->setFirstName($row['firstName']); 
+        $this->setLastName($row['lastName']); 
+        $this->setEmail($row['email']); 
         $this->setFacebookUserID($row['facebookID']); 
         $this->setTwitterUserID($row['twitterID']); 
         $this->setFoursquareUserID($row['foursquareID']); 
@@ -257,10 +317,30 @@ class goUserSettings {
 	$this->setFacebookOAuthToken($row['facebookOAuthToken']);
 	$this->setFacebookOAuthTokenSecret($row['facebookOAuthTokenSecret']);
 	$this->setFacebookProfileImageUrl($row['facebookImageUrl']);
-     } 
+        $rv = true;
+     }
+
+     $link->close();
+     $cursor->close();
+     return $rv;
+  }
+
+  public function updateUserSettings($userID,$firstName,$lastName,$email) {
+    
+     $link = mysqli_connect(Config::getDatabaseServer(),Config::getDatabaseUser(), Config::getDatabasePassword(),Config::getDatabase());
+     if (!$link) die("Error connecting to Database");
+     $sql = sprintf("update go_user set firstName='%s',lastName='%s', email='%s' where userID='%s'",
+             mysqli_real_escape_string($link,$$firstName),
+             mysqli_real_escape_string($link,$lastName),
+             mysqli_real_escape_string($link,$email),
+             mysqli_real_escape_string($link,$userID));
+       
+     if (Config::getDebug()) $this->LOG->log("$sql",PEAR_LOG_INFO);
+     $rc=mysqli_query($link,$sql);
+     if (!$rc) $this->mydie(mysqli_error($link) . " executing sql $sql",$link);
      $link->close();
      return true;
-  }
+  } //updateUserSettings
 
   public function updateTwitterOAuth($userID, $twitterID, $imageUrl, $sec, $tok) {
 
@@ -290,9 +370,9 @@ class goUserSettings {
              mysqli_real_escape_string($link,$tok),
              mysqli_real_escape_string($link,$sec),
              mysqli_real_escape_string($link,$userID));
-     if (Config::getDebug()) $this->LOG->log("$sql",PEAR_LOG_INFO);
+     if (Config::getDebug()) $this->LOG->log("$sql",PEA5R_LOG_INFO);
      $cursor=mysqli_query($link,$sql);
-     if (!$cursor) die(mysqli_error($link));
+     if (!$cursor) $this->mydie(mysqli_error($link) . " executing sql $sql",$link);
      $link->close();
      return true;
   }
@@ -320,8 +400,13 @@ class goUserSettings {
      Utility::$emitForm="string";
      $xml .= Utility::emitXML("","usersettings",0);
 
+     $xml .=Utility::emitXML($this->getLastCode(),"status_code");
+     $xml .=Utility::emitXML($this->getLastMessage(),"status_message");
      $xml .=Utility::emitXML($this->getUserID(),"userid");
      $xml .=Utility::emitXML($this->getUserName(),"username");
+     $xml .=Utility::emitXML($this->getFirstName(),"firstname");
+     $xml .=Utility::emitXML($this->getLastName(),"lastname");
+     $xml .=Utility::emitXML($this->getEmail(),"email");
      $xml .=Utility::emitXML($this->getFacebookUserID(),"facebookuserid");
      $xml .=Utility::emitXML($this->getFacebookProfileImageURL(),"facebookprofileimageurl");
      $xml .=Utility::emitXML($this->getTwitterUserID(),"twitteruserid");
@@ -329,14 +414,28 @@ class goUserSettings {
      $xml .=Utility::emitXML($this->getFoursquareUserID(),"foursquareuserid");
      $xml .=Utility::emitXML($this->getFoursquareProfileImageURL(),"foursquareprofileimageurl");
 
-     $xml .= Utility::emitXML("","settings",0);
+     $xml .= Utility::emitXML("","defaultsettings",0);
      $xml .= Utility::emitXML($this->getFacebookDefault(),"facebookdefault");
      $xml .= Utility::emitXML($this->getTwitterDefault(),"twitterdefault");
      $xml .= Utility::emitXML($this->getFoursquareDefault(),"foursquaredefault");
-     $xml .= Utility::emitXML("","settings",0);
+     $xml .= Utility::emitXML("","defaultsettings",0);
 
      $xml .=Utility::emitXML("","usersettings",0);
      return $xml;
   }
+
+  private function mydie($message,$link,$statusCode=500) {
+   if ($link) $link->close();
+   $this->LOG->log("$message",PEAR_LOG_ERR);
+
+   header("Content-Type: text/xml");
+   header('HTTP/1.1 $statusCode Internal Server Error');
+   Utility::emitXML("","usersettings",0);
+   Utility::emitXML("$statusCode","status_code");
+   Utility::emitXML("$message","status_message");
+   Utility::emitXML("","usersettings",0);
+
+   exit;
+} //mydie
 
 } //class goUserSettings

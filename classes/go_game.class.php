@@ -1,6 +1,7 @@
 <?php
+include('.gobasicdefines.php');
 $include_path=ini_get('include_path');
-ini_set('include_path','/home/juliomiyares/jittr.com/jittr/gameon/classes' . ':' . $include_path);
+ini_set('include_path',INI_PATH . ':' . $include_path);
 require_once('config.class.php');
 require_once('go_usersettings.class.php');
 
@@ -10,6 +11,12 @@ require_once('go_usersettings.class.php');
    TODO: Return xml and other formats ie json 
    TODO: currently use normalized table necessitating joins - ok for now but won't scale properly,
          Not using Denormalized just yet
+   Modified: August 19,2010 by Julio Hernandez-Miyares
+     include .gobasicdefines and change how ini_path is set
+     add query to database go_publicGames keyed by gameID to set the object based on row in table
+     add getQuery function to return the necessary Sql to the function that will actually query the db
+     the getQuery function will determine if it's a go_games or a go_publicgames query.
+     The return set will be maintained identical regardless of which query is crafted
 */
 class Game {
    private $gameID;
@@ -27,6 +34,12 @@ class Game {
    private $pivotCondition;
    private $createdByUserID;
    private $createdByUserName;
+/*Added for public Games - by JHM August 19,2010*/
+   private $team1ID;
+   private $team2ID;
+   private $teamName1;
+   private $teamName2;
+/* end of additions */
    private $subscriptionCloseDate;  // date the subscription period for accepting wager lapses
    private $subscriptionOpen;   //true if open, false otherwise , if true, users can still assume/take the bet
    private $syndicationUrl;    // shortened syndication url to game/wager
@@ -56,6 +69,34 @@ class Game {
 	  $this->getGame($gameID);
        } //if
    } //constructor    
+
+   public function getHomeTeamID() {
+       return $this->team1ID;
+   }
+   public function getVisitingTeamID() {
+       return $this->team2ID;
+   }
+
+   public function getHomeTeam() {
+       return $this->teamName1;
+   }
+   public function getVisitingTeam() {
+       return $this->teamName2;
+   }
+
+   public function setHomeTeamID($in) {
+       $this->team1ID=$in;
+   }
+   public function setVisitingTeamID($in) {
+       $this->team2ID=$in;
+   }
+
+   public function setHomeTeam($in) {
+       $this->teamName1=$in;
+   }
+   public function setVisitingTeam($in) {
+       $this->teamName2=$in;
+   }
 
    public function getGameID() {
       return $this->gameID;
@@ -168,17 +209,31 @@ class Game {
    public function getPivotCondition() {
       return $this->pivotCondition;
    }
-  
+
+/* Craft the necessary SQL depending on whether this is a game from publicGame Table or a defined game in go_games
+*/  
+   private  function getQuery($gameID,$type,$link) {
+
+    if ($type == 'game') {
+       $sql=sprintf("select g.*,t.typeName,s.sportName from go_games g LEFT JOIN go_types_lu t on g.type=t.id LEFT JOIN  go_sports_lu s on g.sportID=s.id LEFT JOIN go_wagerTypes_lu w on g.wagerTypeID = w.id  where g.gameID='%u'",
+           mysqli_real_escape_string($link,$gameID));
+    } else if ($type =='publicgame') {
+       $sql = sprint("select g.*,t.typeName,s.sportName from go_publicgames g LEFT JOIN go_types_lu t on g.type=t.id LEFT JOIN  go_sports_lu s on g.sportID=s.id where g.gameID='%s'",
+           mysqli_real_escape_string($link,$gameID));
+    } //if
+    return $sql;
+   } //getQuery
+
 /* Retrieve Game record from go_games table and populate object properties */
 /* TODO - for expediency, joins prevail - not scalable, use denormalized table or in memory cache   
 */
-   public function getGame($gameID) {
+   public function getGame($gameID,$type='game') {
    
       $link = @mysqli_connect(Config::getDatabaseServer(),Config::getDatabaseUser(), Config::getDatabasePassword(),Config::getDatabase());
       if (!$link) mydie("Error connecting to Database");
 
-      $sql=sprintf("select g.*,t.typeName,s.sportName from go_games g LEFT JOIN go_types_lu t on g.type=t.id LEFT JOIN  go_sports_lu s on g.sport=s.id LEFT JOIN go_wagerTypes_lu w on g.wagerTypeID = w.id  where g.gameID='%u'",
-           mysqli_real_escape_string($link,$gameID));
+      //added JHM 8/19/2010     
+      $sql = $this->getQuery($gameID,$type, $link);
       if (Config::getDebug()) $this->LOG->log("$sql",PEAR_LOG_INFO);
 
       $cursor=@mysqli_query($link,$sql);
@@ -205,6 +260,12 @@ class Game {
       $this->setSyndicationUrl($row['syndicationUrl']);
       $this->setPivotDate($row['pivotDate']);
       $this->setPivotCondition($row['pivotCondition']);
+/*Add JHM - public Games */
+      $this->setHomeTeamID($row['team1ID']);
+      $this->setVisitingTeamID($row['team2ID']);
+      $this->setHomeTeam($row['teamName1']);
+      $this->setVisitingTeam($row['teamName2']);
+/*Finish add */
    }
    private function mydie($message,$link=null) {
       $this->LOG->log("$message",PEAR_LOG_ERR);

@@ -27,62 +27,57 @@ if (!isset($_GET['title'])) {
    $userSettings = new goUserSettings($userID);
 ?>
 <div id="personal">
-<h2><?php echo('Welcome user <a href="goprofile.php?userid=' . $userID . '">'  .  $userName . '</a>' . " - you have ID of $userID"); ?></h2>
-<a href="<?php echo($_SERVER['PHP_SELF'] . "?logout=true"); ?>">Logout</a>
+   <h2><?php echo('Welcome user <a href="goprofile.php?userid=' . $userID . '">'  .  $userName . '</a>' . " - you have ID of $userID"); ?></h2>
+   <a href="<?php echo($_SERVER['PHP_SELF'] . "?logout=true"); ?>">Logout</a>
 </div>
 <br />
-<div id="creategame">
-<form name="input" action="<?php echo($_SERVER['PHP_SELF']); ?>" method="get">
-Game Title:
-<input type="text" name="title" />
-<br />
-Wager Type:
-<input type="text" name="wagertype" />
-<br />
-Wager Units:
-<input type="text" name="wagerunits" />
-<br />
-Select Game Type:
-<?php generateTypelistbox(); ?>
-<br />
-<div id="datewagerinput">
-Pivot Date:
-<input type="text" name="pivotdate" />
-<?php generatePivotCondition(); ?>
-<br />
-</div>
+<div id="quickcreategame">
+   <form name="input" action="<?php echo($_SERVER['PHP_SELF']); ?>" method="get">
+   <h3>Initiate Quick Bet or <a href="<?php echo(Config::getRootDomain());?>/gopublicgames.php">Find an Event to bet</a></h3>
+   Game Title: <input type="text" name="title" />
+   <br />
+   Wager Type: <input type="text" name="wagertype" />
+   <br />
+   Wager Units: <input type="text" name="wagerunits" />
+   <br />
+   Select Game Type: <?php generateTypelistbox(); ?>
+   <br />
+   <div id="datewagerinput">
+      Pivot Date: <input type="text" name="pivotdate" />
+      <?php generatePivotCondition(); ?>
+      <br />
+     </div>
 <div id="socialnetworkinput">
-Facebook:
-<?php if ($userSettings->hasFacebook()) { 
+   <h3>Customize Syndication or <a href="<?php echo(Config::getRootDomain());?>/goprofile.php">Go to Profile Settings</a></h3>
+   Facebook: <?php if ($userSettings->hasFacebook()) { 
    echo '<input type="checkbox" name="network" value="facebook" ' . ($userSettings->isDefaultFacebook() ? "checked": null)  . '/>';
       } else {
    echo '<a href="goauthorizefacebook.php" >Authorize FaceBook</a>';
    }
-?>   
-<br />
-Twitter:
-<?php if ($userSettings->hasTwitter()) { 
+   ?>   
+   <br />
+   Twitter: <?php if ($userSettings->hasTwitter()) { 
    echo '<input type="checkbox" name="network" value="twitter"  ' . ($userSettings->isDefaultTwitter() ? "checked": null)  . '/>';
    $url= $userSettings->getTwitterProfileImageUrl();
    if (!empty($url))
-      echo('<img src="' . $url . '" />');
+      echo('<img src="' . $url . '" height="25px" width="25px"  />');
    } else {
    echo '<a href="goauthorizetwitter.php" >Authorize Twitter</a>';
    }
-?>   
-<br />
-FourSquare:
-<?php if ($userSettings->hasFoursquare()) { 
-   echo '<input type="checkbox" name="network" value="foursquare" ' . ($userSettings->isDefaultFoursquare() ? "checked": null)  . '/>';
-   $url= $userSettings->getFoursquareProfileImageUrl();
-   if (!empty($url))
-      echo('<img src="' . $url . '" />');
-   } else {
-   echo '<a href="goauthorizefoursquare.php?query=fbauthorize" >Authorize Foursquare</a>';
-   }
-?>   
-<br />
-</div>
+   ?>   
+   <br />
+   FourSquare:
+   <?php if ($userSettings->hasFoursquare()) { 
+      echo '<input type="checkbox" name="network" value="foursquare" ' . ($userSettings->isDefaultFoursquare() ? "checked": null)  . '/>';
+      $url= $userSettings->getFoursquareProfileImageUrl();
+      if (!empty($url))
+         echo('<img src="' . $url . '" height="25px" width="25px"/>');
+      } else {
+        echo '<a href="goauthorizefoursquare.php?query=fbauthorize" >Authorize Foursquare</a>';
+      }
+   ?>   
+   <br />
+   </div>
 <input type="submit" value="Submit" />
 <input type="hidden" value="<?php echo($userID);?>" name="createdbyuserid" />
 <input type="hidden" value="<?php echo($userName);?>" name="createdbyusername" />
@@ -90,12 +85,12 @@ FourSquare:
 </div>
 <?php
 //get User defined games
-echo('<div id="userdefinedgames">');
+echo('<div id="userinitiatedbets">');
 getUserDefinedGames($userID, $userName);
 echo('</div>');
 
 //get games subscribed to
-echo('<div id="usersubscribedgames">');
+echo('<div id="useracceptedbets">');
 getUserSubscribedGames($userID);
 echo('</div>');
 ?>
@@ -130,39 +125,53 @@ exit;
 //retrieves games that the user has created
 //*** You need to set options of CURLOPT_RETURNTRANSFER to actually return the xml from the webservice otherwise you get a true/false in the return value
 function getUserDefinedGames($userID, $userName) {
- $url= Config::getAPIDomain() . "/go_getusergames.php?query=created&userid=" . urlencode($userID);
+ $url= Config::getAPIDomain() . "/go_getusergames.php?query=created&userid=" . urlencode($userID) . "&sort=recent";
  $curl = @curl_init($url);
  curl_setopt($curl,CURLOPT_RETURNTRANSFER,true);
  $xml = @curl_exec($curl);
  curl_close($curl);
  if ($xml) {
     $document=simplexml_load_string($xml);
-    echo("<h3>Wagers you have created</h3>");
+    echo("<h3>Recent Bets you have initiated</h3>");
     echo("<ul>");
+    $recordcnt=0;
     foreach($document->game as $game) {
-       echo('<li><a href="gocustomizegame.php?gameid=' . $game->gameid . '">' . $game->title . '</a></li>');
-    }  
+       $recordcnt++;
+       if ($recordcnt <= 5) {  
+          echo('<li><a href="gocustomizegame.php?gameid=' . $game->gameid . '">' . $game->title . '</a></li>');
+       } else {   
+          echo('<li><a href="godashboard.php">See All your Initiated Bets</a></li>');
+          break;
+       }  //if  
+    } //for
     echo("</ul>");
     return;
  }
 } //function
 
 
-//retrieves games that the user has subscribed to 
+//retrieves games that the user has accepted/subscribed to 
 function getUserSubscribedGames($userID) {
- $url= Config::getAPIDomain() . "/go_getusergames.php?query=subscribed&userid=" . urlencode($userID); 
+ $url= Config::getAPIDomain() . "/go_getusergames.php?query=subscribed&userid=" . urlencode($userID) . "&sort=recent"; 
  $curl = @curl_init($url);
  curl_setopt($curl,CURLOPT_RETURNTRANSFER,true);
  $xml =  @curl_exec($curl);
  curl_close($curl);
  if ($xml) {
     $document=simplexml_load_string($xml);
-    echo("<h3>Wagers you have subscribed to not including those you created</h3>");
+    echo("<h3>Recent Bets Accepted</h3>");
     echo("<ul>");
+    $recordcnt=0;
     foreach($document->game as $game) {
-       echo('<li><a href="gocustomizegame.php?gameid=' . $game->gameid . '">' . $game->title . '</a></li>');
-    }  
-  }
+       $recordcnt++;
+       if ($recordcnt <= 5) {  
+          echo('<li><a href="gocustomizegame.php?gameid=' . $game->gameid . '">' . $game->title . '</a></li>');
+       } else {
+          echo('<li><a href="godashboard.php">See All your Accepted Bets</a></li>');
+          break;
+       } //if
+    } //foreach
+  } //if
   echo("</ul>");
   return;
  }// getUserSubcribedGames
@@ -203,6 +212,4 @@ function generateTypeListbox($typeName=null) {
    $link->close();
    echo('</select>');
 }
-
 ?>
-

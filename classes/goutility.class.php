@@ -65,5 +65,16 @@ public static function generateUniqueIDKey($type) {
 
 return time();
 } //generateUnqiueIDKey
+
+/* generate unique key into go_gameInvite which represents the key to an invite to a game/bet
+   TODO - with prefix of time to sessionID should guarantee uniqueness but would want to make the key
+          mean something more then just a unqiue reference to the record in the table
+*/
+public static function generateGameInvite() {
+   $gameInviteKey = time() . session_id();
+   return $gameInviteKey;
+}
+ //generateGameInvite
+
 } //class Utility
 ?>

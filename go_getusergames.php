@@ -5,6 +5,10 @@ ob_start();
    Purpose: retrive from games for a particular user and return xml
             retrive games that a user is subscribed to  
 	   
+   Update: by Julio Hernandez-Miyares
+           August 17,2010
+           added sort query parameter 
+           sorts results 
    TODO: initially only retrieve those defined by userid, add those not created by userid but subscribed 
    TODO: implement retrieval by various filters
               sport, leauge , date
@@ -21,6 +25,7 @@ $LOG=Config::getLogObject();
 
 $userID=$_GET['userid'];
 $query =$_GET['query'];
+$querySort = $_GET['sort'];
 /* verify have enough to continue - set defaults for missing parameters as long as they are not
    mandatory
 */
@@ -44,6 +49,12 @@ else if ($query == "subscribed")
    $sql = sprintf("select g.* from go_games g, go_gamesSubscribers s where s.userID='%u' and s.gameID = g.gameID",mysqli_real_escape_string($link,$userID));
 else
     mydie("invalid query - $query");
+
+/* Sorting if set from query parameter */
+if (!empty($querySort)) {
+   if ('recent' == strtolower($querySort))
+       $sql .= " order by createdDate desc ";
+} //if
 
 $sql .= " Limit 0,100";
 if (Config::getDebug()) $LOG->log("$sql",PEAR_LOG_INFO);

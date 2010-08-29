@@ -6,9 +6,16 @@ ob_start();
   Purpose: Log in - no security at the moment 
   Drops a cookie for userName and userID
   until security is enabled use the jittrdev account added by default
+  Modified: By Julio Hernandez-Miyares
+  Date: August 22,2010
+   Clean up css to make it presentable
+   allow registering for first time
+
 */
+include('.gobasicdefines.php');
 $include_path=ini_get('include_path');
-ini_set('include_path','/home/juliomiyares/jittr.com/jittr/gameon/classes' . ':' . $include_path);
+ini_set('include_path',INI_PATH . ':' . $include_path);
+
 require_once('config.class.php');
 require_once('go_usersettings.class.php');
 require_once('facebook.php');
@@ -35,8 +42,11 @@ $facebook = new Facebook(array(
 */
 if (!empty($register)) {
   $operation="register";
-  $newUserName = $_GET['newusername'];
-  $newPassword = $_GET['newpassword'];
+  $params['newusername'] = $_GET['newusername'];
+  $newUserName = $params['newusername'];
+  $params['newpassword'] = $_GET['newpassword'];
+  $params['newfirstname']= $_GET['newfirstname'];
+  $params['newlastname'] = $_GET['newlastname'];
   $network=strtolower($_GET['network']);
 } else if (!empty($login)) {
   $operation="login";
@@ -48,22 +58,26 @@ else
   $operation="loginform";
 if ($operation=="loginform") {
 ?>
-<form name="input" action="<?php echo($_SERVER['PHP_SELF']); ?>" method="get">
-<p><strong>**USE jittrdev as a test account which has been setup in all of the Social Networks</strong></p> 
-Login ID:
-<input type="textbox" name="username"  />
-Password: (TODO-implement md5 hashing, currently, cleartext over the wire)
-<input type="password" name="password"  />
-<input type="submit" name="login" value="Login" />
-<br />
-<p>Register as a new User of <strong>GameOn</strong> using the credentials of the networks below</p>
-New User Name:
-<input type="textbox" name="newusername" />
-Password:
-<input type="password" name="newpassword" />
-Verify Password:
-<input type="password" name="newpassword_verifier" />
-<br />
+<div id="userlogin">
+   <form name="input" action="<?php echo($_SERVER['PHP_SELF']); ?>" method="get">
+   <p><strong>**USE jittrdev as a test account which has been setup in all of the Social Networks</strong></p> 
+   Login ID:
+   <input type="textbox" name="username"  />
+   Password: (TODO-implement md5 hashing, currently, cleartext over the wire)
+   <input type="password" name="password"  />
+   <input type="submit" name="login" value="Login" />
+   <br />
+</div>
+<div id="newuserregister">
+   <p>Register as a new User of <strong>GameOn</strong> using the credentials of the networks below</p>
+   New User Name:
+   <input type="textbox" name="newusername" />
+   Password:
+   <input type="password" name="newpassword" />
+   Verify Password:
+   <input type="password" name="newpassword_verifier" />
+   <br />
+</div>
 <div id="selectnetwork">
 <label>None Leave for later:</label><input type="radio" name="network" value="none" CHECKED />
 <br />
@@ -94,22 +108,25 @@ Verify Password:
    /* TODO - add code to determine if the retrieval failed due to error or because the userid or username not defined. For now assume error */
    if (!rc) {  
    // Server error
-      header('HTTP/1.1 500 Internal Server Error');
-      die("Error connecting to Database");
+      mydie("Error connecting to Database");
    }
    $userID = $userSettings->getuserID();
    setcookie('userid',$userID);
    setcookie('username',$userSettings->getUserName());
-   header("Location:http://jittr.com/jittr/gameon");
+   header("Location: " .  Config::getRootDomain() );
 } else if ($operation =="register") {
   // make sure we have the minimum necessary populated fields
   if (empty($newUserName) || empty($newPassword) ) {
   }
   
 /* first take care of inserting new user into go_user table */
-  $rc = insertNewUser($newUserName,$newPassword);
-/* If $rc is > 0), the insert succeeded and the return is the newUserID 
-*/
+  $rc = insertNewUser($params);
+   If (!$rc) {
+      header("Location:" . $_SERVER['PHP_SELF'] . "?errormessage=" . urlencode("User name $userName not available"));
+      exit;
+   } // if
+ 
+//the insert succeeded and the return is the newUserID 
   $newUserID=$rc;
   if ($network != 'none') {
       registerWithSocialNetwork($network);
@@ -117,8 +134,8 @@ Verify Password:
   /* Temporary here */
   setcookie('userid',$newUserID);
   setcookie('username',$newUserName);
-  header("Location: http://jittr.com/jittr/gameon");
-
+  header("Location: " . Config::getRootDomain() ); 
+  exit;
 } else if ($operation =="getoauthtoken") {
   $code = $_GET['code'];
   $access_token = $_GET['access_token'];
@@ -145,7 +162,7 @@ Verify Password:
 
   if (Config::getDebug()) $LOG->log("Get FB user profile result= " . $result);
   $rc = insertUserFacebook($result,$oauth);
-  header("Location: http://jittr.com/jittr/gameon");
+  header("Location: " .  Config::getRootDomain() ); 
 }
 ob_end_flush();
 exit;
@@ -188,7 +205,7 @@ function insertUserFacebook($me, $oauth) {
    $url="http://jittr.com/jittr/gameon/go_postnewuser.php?".
                "facebookid=$facebookID" .
                "&primarynetworkname=$primaryNetworkName".
-               "&username=" . urlencode($userName).
+               "&newusername=" . urlencode($userName).
                "&" . $OAuthToken;
    if (Config::getDebug()) $LOG->log("calling from insertUserFacebook using url = " . $url);
    $curl = curl_init($url);
@@ -200,13 +217,21 @@ function insertUserFacebook($me, $oauth) {
 }
 /* Insert new record for new user in go_user table 
    returns the userID a unique long
+   Modified JHM August 22,2010 
+   deal with various errors/issues that can arise from posting
+   new userID
+   TODO - change to post from get
+   TODO - encode the password
 */
-function insertNewUser($userName, $password) {
+function insertNewUser($params) {
    global $LOG;
    $userID = 0;
-   $url= Config::getAPIDomain() . "/go_postnewuser.php?".
-               "newusername=" . $userName .
-               "&password=" . $password;
+   $userName = $params['newusername'];
+   $password= $params['newpassword'];
+   
+   $url= Config::getAPIDomain() . "/go_postnewuser.php?" .
+               "newusername=" . urlencode($userName) .
+               "&password=" . urlencode($password);
    if (Config::getDebug()) $LOG->log("calling insertNewUser using url = " . $url);
    $curl = @curl_init($url);
    $opts=Facebook::$CURL_OPTS;
@@ -217,10 +242,20 @@ function insertNewUser($userName, $password) {
 /* Parse the returned XML */
    $document = @simplexml_load_string($result);
    if ($document) {
-      $userID = $document->userid;
-      echo("Userid = $userID");
-   }
+   //check the return code
+      if ($document->status_code == 200) {
+          $userID = $document->userid;
+      } else return false;
+   } //
    return $userID;
 }
+function mydie($message,$statusCode=500) {
+global $LOG;
+global $link;
 
+//   ob_end_clean();
+   if ($link) $link->close();
+   $LOG->log("$message",PEAR_LOG_ERR);
+   ob_end_flush();
+}
 ?>
