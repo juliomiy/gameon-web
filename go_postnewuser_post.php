@@ -9,8 +9,13 @@ ob_start();
     check that newUserName is available
    Modified: by JHM August 29,2010
      added, firstname, lastname and email to the xml return on success
+   Modified: by JHM September 1,2010
+     added operation flag - update, 
+     
+   TODO - add delete user
    TODO - confirm not a duplicate email address
    TODO - deal password encrytion
+   TODO - make password mandatory if using Betsquare name space for registration
 */
 include('.gobasicdefines.php');
 $include_path=ini_get('include_path');
@@ -27,10 +32,6 @@ $userID = -1; //actual userID will be obtained from the insert into go_user
 $LOG=Config::getLogObject();
 //key of array is the Query parm and value is the field name in the database
 /*
-$_POST['foursquareid']="test";
-$_POST['twitterid']="test2";
-$_POST['facebookid']="test3";
-
 $parmArray = array("foursquareid"=>"foursquareID",
                    "twitterid"=>"twitterID",
 		   "facebookid"=>"facebookID",
@@ -49,6 +50,9 @@ echo("$list");
 exit;
 */
 
+$operation = $_POST['operation'];
+if (empty($operation)) $operation='insert'; //default to insert which is the current functionality
+ 
 $userName = $_POST['username'];
 $newUserName = $_POST['newusername'];
 $password= $_POST['password'];
@@ -56,11 +60,13 @@ $firstName = $_POST['firstname'];
 $lastName = $_POST['lastname'];
 $email= $_POST['email'];
 $primaryNetworkName = $_POST['primarynetworkname'];
+$primaryNetworkID= $_POST['primarynetworkid'];
 $foursquareID = $_POST['foursquareid'];
 $twitterID = $_POST['twitterid'];
 $facebookID= $_POST['facebookid'];
 $aimID= $_POST['aimid'];
 $icqID= $_POST['icqid'];
+$avatarURL = $_REQUEST['avatarurl'];
 
 $foursquareDefault = $_POST['foursquaredefault'];
 $twitterDefault = $_POST['twitterdefault'];
@@ -68,24 +74,34 @@ $facebookDefault= $_POST['facebookdefault'];
 
 $OAuthToken= $_POST['oauthtoken'];
 //temporary for facebook
-$OAuthToken= $_POST['access_token'];
+//$OAuthToken= $_POST['access_token'];
 
 $OAuthTokenSecret= $_POST['oauthtokensecret'];
 
 //need to check what network these tokens are for to set the appropriate variables
-if ($primaryNetworkName == "twitter") {
-   $twitterOAuthToken = $OAuthToken;
-   $twitterOAuthTokenSecret = $OAuthTokenSecret; 
-} else if ($primaryNetworkName == "foursquare") {
-   $foursquareOAuthToken= $OAuthToken;
-   $foursquareOAuthTokenSecret= $OAuthTokenSecret; 
-} else if ($primaryNetworkName="facebook") {
-     $facebookOAuthToken= $OAuthToken;
-}
+switch ($primaryNetworkID) {
+   case TWITTER_NETWORK:
+       $twitterOAuthToken = $OAuthToken;
+       $twitterOAuthTokenSecret = $OAuthTokenSecret;
+       $twitterImageUrl= $avatarURL;
+       break; 
+   case FOURSQUARE_NETWORK:
+       $foursquareOAuthToken= $OAuthToken;
+       $foursquareOAuthTokenSecret= $OAuthTokenSecret; 
+       $foursquareImageUrl= $avatarURL;
+       break;
+   case FACEBOOK_NETWORK:
+       $facebookOAuthToken= $OAuthToken;
+       $facebookImageUrl= $avatarURL;
+       break;
+   case BETSQUARED_NETWORK:
+       if (empty($password)) {
+//          mydie("Password missing");
+       };
+       break;
+} //switch
 
-$foursquareImageUrl= $_POST['foursquareimageurl'];
-$twitterImageUrl= $_POST['twitterimageurl'];
-$facebookImageUrl= $_POST['facebookimageurl'];
+
 
 $trimCharlist="\x00..\x1F";
 
@@ -113,7 +129,7 @@ if (!$link)
 if (!userNameAvailable($newUserName,$link)) {
    mydie("UserName $newUserName not available",410);
 } //if
-$userID = insertNewUser($newUserName,$password,$firstName, $lastName,$email,$link);
+$userID = insertNewUser($newUserName,$password,$firstName, $lastName,$email,$primaryNetworkID, $primaryNetworkName,$link);
  
 //define and insert the go_userSettings record
 $sql=sprintf("insert into go_userSettings (userID,facebookID,twitterID,foursquareID,facebookOAuthToken,twitterOAuthToken,foursquareOAuthToken,twitterOAuthTokenSecret,foursquareOAuthTokenSecret,facebookImageUrl,twitterImageUrl,foursquareImageUrl) values ('%u','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')",
@@ -156,7 +172,7 @@ exit;
 /*Add new User to the go_user table
   if successful return the userID
 */
-function insertNewUser($newUserName, $password, $firstName, $lastName, $email, $link) {
+function insertNewUser($newUserName, $password, $firstName, $lastName, $email, $primaryNetworkID,$primaryNetworkName,$link) {
    global $LOG;
 //define insert sql  into go_user
    $sql = sprintf("insert into go_user (userName,firstName, lastName, email, primaryNetworkName,password) values ('%s','%s','%s','%s','%s','%s')",
@@ -210,13 +226,13 @@ function userNameAvailable($userName,$link) {
 function mydie($message,$statusCode=500) {
 global $LOG;
 global $link;
-//   ob_end_clean();
+   ob_end_clean();
    if ($link) $link->close();
    $LOG->log("$message",PEAR_LOG_ERR);
 
-//   ob_start();
+   ob_start();
    header("Content-Type: text/xml");
-   header('HTTP/1.1 $statusCode Internal Server Error');
+//   header('HTTP/1.1 $statusCode Internal Server Error');
    Utility::emitXML("","insert_user",0);
    Utility::emitXML("$statusCode","status_code");
    Utility::emitXML("$message","status_message");

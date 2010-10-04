@@ -3,4 +3,9 @@ test*.*
 tmp*.*
 *.swp
 *.bak
+Prototype
+prototype
+*.csv
+data/test
+jkl
 

@@ -6,8 +6,10 @@ ob_start();
 */	      
 /* using GET instead of POST even though these represent changes to the Database
 */
+include('.gobasicdefines.php');
 $include_path=ini_get('include_path');
-ini_set('include_path','/home/juliomiyares/jittr.com/jittr/gameon/classes' . ':' . $include_path);
+ini_set('include_path',INI_PATH . ':' . $include_path);
+
 require_once('config.class.php');
 require_once('goutility.class.php');
 $LOG=Config::getLogObject();

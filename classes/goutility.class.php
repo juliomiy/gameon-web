@@ -2,9 +2,16 @@
 /* Author: Julio Hernandez-Miyares
    Date: April 2010
    Purpose: Set of convenience methods mostly static
+   Modified: by Julio Hernandez-Miyares
+   Date: September 5,2010
+   Purpose: Add utlity lookups for the LU tables, initially by simple mysql reads.
+     Consider a less resource intensive manor for these lookups
+
 */   
+include('.gobasicdefines.php');
 $include_path=ini_get('include_path');
-ini_set('include_path','/home/juliomiyares/jittr.com/jittr/gameon/classes' . ':' . $include_path);
+ini_set('include_path',INI_PATH . ':' . $include_path);
+
 require_once('config.class.php');
 
 class Utility {
@@ -75,6 +82,29 @@ public static function generateGameInvite() {
    return $gameInviteKey;
 }
  //generateGameInvite
+
+public static function getTeamIDbyTeamName($teamName) {
+   $LOG = Config::getLogObject();
+   $link = mysqli_connect(Config::getDatabaseServer(),Config::getDatabaseUser(), Config::getDatabasePassword(),Config::getDatabase());
+   if (!$link)
+   {   
+      // Server error
+      mydie("Error connecting to Database");
+   }
+   $sql = sprintf("select id from go_teams_lu where teamName = '%s'",
+      mysqli_real_escape_string($link,$teamName));
+   if (Config::getDebug()) $LOG->log("$sql",PEAR_LOG_INFO);
+   $cursor = mysqli_query($link,$sql);
+   if (!$cursor) {
+      // Server error
+      mydie(mysqli_error($link),500,$link);
+   } //if
+   $row = mysqli_fetch_assoc($cursor);
+   $teamID = $row['id'];
+   $cursor->close();
+   $link->close();
+   return $teamID;
+}  //getTeamIDbyTeamName
 
 } //class Utility
 ?>

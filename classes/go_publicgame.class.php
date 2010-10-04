@@ -177,7 +177,7 @@ class goPublicGame {
       $link = @mysqli_connect(Config::getDatabaseServer(),Config::getDatabaseUser(), Config::getDatabasePassword(),Config::getDatabase());
       if (!$link) mydie("Error connecting to Database");
 
-      $sql=sprintf("select g.*,t.typeName,s.sportName, l.leagueName from go_publicgames g LEFT JOIN go_types_lu t on g.type=t.id LEFT JOIN  go_sports_lu s on g.sportID=s.id LEFT JOIN go_leagues_lu l on g.leagueID = l.id where g.gameID='%u'", mysqli_real_escape_string($link,$gameID));
+      $sql=sprintf("select g.*,t.typeName,s.id,s.sportName, l.leagueName from go_publicgames g LEFT JOIN go_types_lu t on g.type=t.id LEFT JOIN  go_sports_lu s on g.sportID=s.id LEFT JOIN go_leagues_lu l on g.leagueID = l.id where g.gameID='%u'", mysqli_real_escape_string($link,$gameID));
       if (Config::getDebug()) $this->LOG->log("$sql",PEAR_LOG_INFO);
 
       $cursor=@mysqli_query($link,$sql);
@@ -191,8 +191,9 @@ class goPublicGame {
       $this->setDescription($row['description']);
       $this->setTitle($row['title']);
       $this->setEventName($row['eventName']);
-      $this->setEventDate($row['eventDate']);
-      $this->setSportID($row['sport']);
+      //$this->setEventDate($row['eventDate']);
+      $this->setEventDate($row['date']);
+      $this->setSportID($row['id']);
       $this->setSportName($row['sportName']);
       $this->setLeagueName($row['leagueName']);
       $this->setFavorite($row['favorite']);

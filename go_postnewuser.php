@@ -49,7 +49,9 @@ exit;
 $userName = $_GET['username'];
 $newUserName = $_GET['newusername'];
 $password= $_GET['password'];
+$email = $_GET['email'];
 $primaryNetworkName = $_GET['primarynetworkname'];
+$primaryNetworkID= $_GET['primarynetworkid'];
 $foursquareID = $_GET['foursquareid'];
 $twitterID = $_GET['twitterid'];
 $facebookID= $_GET['facebookid'];
@@ -109,10 +111,13 @@ if (!userNameAvailable($newUserName,$link)) {
 } //if
  
 //define insert sql  into go_user
-$sql = sprintf("insert into go_user (userName,primaryNetworkName,password) values ('%s','%s','%s')",
+$sql = sprintf("insert into go_user (userName,primaryNetworkID,primaryNetworkName,password) values ('%s','%u','%s','%s','%s')",
         mysqli_real_escape_string($link,$newUserName),
+        mysqli_real_escape_string($link,$primaryNetworkID),
         mysqli_real_escape_string($link,$primaryNetworkName),
+        mysqli_real_escape_string($link,$email),
         mysqli_real_escape_string($link,$password));
+
 
 if (Config::getDebug()) $LOG->log("$sql",PEAR_LOG_INFO);
 $rc = mysqli_query($link,$sql); 

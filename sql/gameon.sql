@@ -35,6 +35,7 @@ drop table if exists go_user
 create table go_user (
       userID integer primary key auto_increment not null,
       userName varchar(50) not null default 'Julio',
+      phoneNumber varchar(20) null,
       password varchar(32) not null,
       firstName varchar(50) null,
       lastName varchar(50) null,
@@ -56,6 +57,59 @@ insert into go_user (userName,privacy, bankBalance) values ('jittrjohn',false, 1
 //
 insert into go_user (userName,privacy, bankBalance) values ('jittrralph',false, 10000)
 //
+/* go_userFriends
+   table of betsquared friends
+   created by Julio Hernandez-Miyares
+   date: September 2,2010
+   very simple initially
+   initially primarily for devleopment, your list of friends will constitute the
+   users that a bet is syndicated to
+*/
+drop table if exists go_userFriends
+//
+create table go_userFriends (
+      userID integer not null,
+      friendUserID integer not null,
+      friendUserName varchar(50) not null ,
+      friendName varchar(50) null ,
+      createdDate timestamp not null default current_timestamp(),
+      modifiedDate timestamp null,
+      PRIMARY KEY (userID, friendUserID)
+)
+ENGINE=INNODB
+//
+/* go_friendInvites
+   table to manage invites of friends
+   Invitees can be users already on BetSquared and those will have BS UserID or those outside of BS where the BSUserID will default
+   to -0-
+    inviteStatus 
+            Created
+            Mailed
+                Accepted
+                Declined
+                Lapsed
+    inviteNetwork - constant representing from which network the user was invited ie foursquare, facebook, twitter, BS 
+    invitetorUserID, inviteeUserName , inviteNetwork together guarantte uniqueness
+    use field inviteorUserID to get all the invites an individual user has outstanding
+    use field inviteeBSUserID to get all the invites user has  received
+*/
+drop table if exist go_friendInvites
+//
+create table go_friendInvites (
+      invitetorUserID integer not null,
+      inviteeBSUserID integer not null default 0,
+      inviteeUserName varchar(100) not null, 
+      inviteStatus varchar(25) not null default 'Created',
+      inviteNetworkID int not null default 0,
+      inviteNetworkName varchar(50) null,
+      createdDate timestamp not null default current_timestamp(),
+      modifiedDate timestamp null,
+      PRIMARY KEY (invitetoruserID, inviteeUserName, inviteNetworkID),
+      INDEX (inviteeBSUserID)
+)
+ENGINE=INNODB
+//
+
 /* go_userDashboard
    normalized table that aggregates user metrics using the application
    keyed by the various manors of ascertaining a user's identity
@@ -252,6 +306,8 @@ create table go_games (
    pivotCondition varchar(10) null,
    sportID int not null default 0,
    sportName varchar(50) null,
+   leagueName varchar(50) null,
+   numberSubscribed int not null default 0,
    closeDateTime datetime not null default '0000-00-00 00:00:00', 
    expirationDateTime datetime not null default '0000-00-00 00:00:00' ,
    syndicationUrl varchar(255) not null,
@@ -264,6 +320,30 @@ create table go_games (
 )
 ENGINE INNODB
 //
+/* Contains a record for each Bet Subscriber to a 
+   team event which is characterized as 2 teams playing for win/lose. 
+   The expectation is the game is defined in go_publicgames
+   Initially, position will be 1 for win , 0 for lose though 
+   win will be the normal state as the user will select one of two teams to win
+   initiatorFlag = 1 for the initiator of the bet, 0 for someone that takes the bet
+*/
+drop table if exists go_gameSubscribers_Team
+//
+create table go_gameSubscribers_Team (
+   gameID varchar(25) not null,
+   publicGameID int null default 0,
+   userID int not null,
+   initiatorFlag int not null default 0,
+   position int not null default 1,
+   teamID int not null,
+   teamName varchar(50) not null,
+   modifiedDate timestamp null,
+   createdDate timestamp not null default current_timestamp(),
+   PRIMARY KEY(gameID,userID)
+)
+ENGINE INNODB
+//
+
 /* Will contain a record for each combination of a "game" - a record defined in go_games, and a person who has
    taken the wager (subscribed). This will most likely be the largest table in terms of records in GameOn schema
    Only one record per gameID can have the creator field set to true per initial requirements
@@ -311,6 +391,28 @@ create table go_gameInvite (
 )
 ENGINE INNODB
 //
+/* go_gameInviteDetail
+   created by Julio Hernandez-Miyares
+   date: September 2,2010
+   A record for each explicit invite for a bet
+   
+*/
+drop table if exists go_gameInviteDetail
+//
+create table go_gameInviteDetail (
+   gameID varchar(25) not null,
+   inviteKey varchar(255) not null,
+   createdByUserID integer not null,
+   createdByUserName varchar(50) not null,
+   inviteeUserID integer not null,
+   inviteStatus integer not null default 0,
+   createdDate timestamp not null default current_timestamp(),
+   modifiedDate timestamp null,
+   PRIMARY KEY( gameID, createdByUserID,inviteeUserID )  
+)
+ENGINE INNODB
+//
+
 /* go_gameInvitePrivate is associated with the go_gameInvite Table
    it is used for when there are explicit invites to a bet/game
    instead of just a mass fully open invite for anyone that 
