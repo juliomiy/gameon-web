@@ -1,19 +1,13 @@
 <?php
 ob_start();
 /* Author: Julio Hernandez-Miyares
-   Date: May 24, 2010
-   Purpose: insert new  user and optional settings in go_user and go_userSettings
-   using GET instead of POST even though these represent changes to the Database
-   Modified: by Julio Hernandez-Miyares on August 22,2010
-    make newUserName mandatory to be able to insert a new user record 
-    check that newUserName is available
-   Modified: by JHM August 29,2010
-     added, firstname, lastname and email to the xml return on success
-   Modified: by JHM September 1,2010
-     added operation flag - update, 
-   Modified: by JHM November 7,2010
-     insert go_userBank record for the user with default bank Balance
-
+   Date: October 25,2010
+   Purpose: update user settings and bank balance
+   TODO - do I really want bank balance transaction in this webservice
+   For convenience nd quick development, yes for now
+ 
+   After update (Post) will call and repopulate userSettings class and return via xml as the response to the post
+  
    TODO - add delete user
    TODO - confirm not a duplicate email address
    TODO - deal password encrytion
@@ -22,10 +16,9 @@ ob_start();
 include('.gobasicdefines.php');
 $include_path=ini_get('include_path');
 ini_set('include_path',INI_PATH . ':' . $include_path);
-
-require_once('config.class.php');
 require_once('goutility.class.php');
-require_once('go_userbank.class.php');
+require_once('go_usersettings.class.php');
+
 /* retrieve query parameters
    Required parameters are
    primaryNetworkName - currently either facebook, twitter or foursquare
@@ -33,29 +26,23 @@ require_once('go_userbank.class.php');
 $userID = -1; //actual userID will be obtained from the insert into go_user
 
 $LOG=Config::getLogObject();
-//key of array is the Query parm and value is the field name in the database
-/*
-$parmArray = array("foursquareid"=>"foursquareID",
-                   "twitterid"=>"twitterID",
-		   "facebookid"=>"facebookID",
-                   "foursquaredefault"=>"foursquareDefault",
-                   "twitterdefault"=>"twitterDefault",
-		   "facebookdefault"=>"facebookDefault");
-foreach($parmArray as $key => $value) {
-    if (empty($_POST[$key])) {
-       echo("$key is empty\n");
-       $list .=$value .",";
-    }
-    else
-       echo("$key is not empty\n");
-}
-echo("$list");
-exit;
-*/
 
-$operation = $_POST['operation'];
+$operation = strtolower($_REQUEST['operation']);
+$userID = $_REQUEST['userid'];
+
 if (empty($operation)) $operation='insert'; //default to insert which is the current functionality
- 
+
+/* transactionID  - the transactionID from the service provider
+   transactionType - purchase , transfer, etc - currently only purchase supported
+   transactionProvider - the ecommerce solution used - currently only paypal supported
+
+*/
+if ($operation == 'updatebankbalance') {
+   $transactionID = $_REQUEST['transactionid'];
+   $transactionType = $_REQUEST['transactiontype'];
+   $transactionProvider = $_REQUEST['transactionprovider'];
+
+} 
 $userName = $_POST['username'];
 $newUserName = $_POST['newusername'];
 $password= $_POST['password'];
@@ -114,68 +101,63 @@ header("Content-Type: text/xml");
    At the moment, no required Fields - If all fields are null, a record will be inserted and
    the new userID returned.
 */
-if (empty($primaryNetworkName)) {
-   mydie("Query parameters missing");
-}
-//Implement transactional semantics - the insert into go_user and go_userSettings need to be atomic
-//Perhaps a stored procedure is the best way to implement
 
-/*echo '<?xml version="1.0" encoding="UTF-8"?>';
-*/
 $link = mysqli_connect(Config::getDatabaseServer(),Config::getDatabaseUser(), Config::getDatabasePassword(),Config::getDatabase());
 if (!$link)
 {
    // Server error
    mydie("Error connecting to Database");
 }
-//check if the userName is available
-if (!userNameAvailable($newUserName,$link)) {
-   mydie("UserName $newUserName not available",410);
-} //if
-$userID = insertNewUser($newUserName,$password,$firstName, $lastName,$email,$primaryNetworkID, $primaryNetworkName,$link);
- 
-//define and insert the go_userSettings record
-$sql=sprintf("insert into go_userSettings (userID,facebookID,twitterID,foursquareID,facebookOAuthToken,twitterOAuthToken,foursquareOAuthToken,twitterOAuthTokenSecret,foursquareOAuthTokenSecret,facebookImageUrl,twitterImageUrl,foursquareImageUrl) values ('%u','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s')",
-        mysqli_real_escape_string($link,$userID),
-        mysqli_real_escape_string($link,$facebookID),
-        mysqli_real_escape_string($link,$twitterID),
-        mysqli_real_escape_string($link,$foursquareID),
-        mysqli_real_escape_string($link,$facebookOAuthToken),
-        mysqli_real_escape_string($link,$twitterOAuthToken),
-        mysqli_real_escape_string($link,$foursquareOAuthToken),
-        mysqli_real_escape_string($link,$twitterOAuthTokenSecret),
-        mysqli_real_escape_string($link,$foursquareOAuthTokenSecret),
-        mysqli_real_escape_string($link,$facebookImageUrl),
-        mysqli_real_escape_string($link,$twitterImageUrl),
-        mysqli_real_escape_string($link,$foursquareImageUrl));
+$sql = getQuery($operation,$link,$_REQUEST);
 if (Config::getDebug()) $LOG->log("$sql",PEAR_LOG_INFO);
-$rc = mysqli_query($link,$sql); 
+$rc = mysqli_multi_query($link,$sql);
 if (!$rc) {
-   // Server error
-   mydie(mysqli_error($link));
+}
+if ($operation == 'updatebankbalance') {
+} else {
 }
 
 header('HTTP/1.1 200 OK');
 $link->close();  /* Close Database */
-//return xml 
-Utility::emitXML("","insert_user",0);
-Utility::emitXML("200","status_code");
-Utility::emitXML("ok","status_message");
-Utility::emitXML("$userID","userid");
-Utility::emitXML("$newUserName","username");
-Utility::emitXML("$firstName","firstname");
-Utility::emitXML("$lastName","lastname");
-Utility::emitXML("$email","email");
-Utility::emitXML("$primaryNetworkName","networkname");
-Utility::emitXML("","insert_user",0);
-ob_end_flush();
 
+//return xml 
+$userSettings = new goUserSettings($userID);
+if (isset($userSettings)) {
+    $userSettings->setOutputFlag('xml');
+    echo($userSettings);
+}
+ob_end_flush();
 exit;
 
 /*Add new User to the go_user table
-  if successful return the userID
-  insert new go_userBank record - the top level Bank Record
+ return sql based on operation
 */
+function getQuery($operation,$link,$params) {
+
+$userID = $params['userid'];
+$transactionID = $params['transactionid'];
+$transactionTypeID = $params['transactiontypeid'];
+$transactionTypeName = $params['transactiontypename'];
+$transactionAmountCurrency= $params['transactionamountcurrency'];
+$transactionAmountDucketts= $params['transactionamountducketts'];
+$transactionProvider = $params['transactionprovider'];
+
+$sql = sprintf("update go_userBank b set b.bankBalance = b.bankBalance + '%u' where b.userID = '%u';",
+           mysqli_real_escape_string($link,$transactionAmountDucketts),
+           mysqli_real_escape_string($link,$userID)
+);
+
+$sql .= sprintf("insert into go_userBankDetail (userID, transactionID,transactionTypeID,transactionTypeName,transactionAmount) 
+           values ('%u','%s','%u','%s','%u')",
+           mysqli_real_escape_string($link,$userID),
+           mysqli_real_escape_string($link,$transactionID),
+           mysqli_real_escape_string($link,$transactionTypeID),
+           mysqli_real_escape_string($link,$transactionTypeName),
+           mysqli_real_escape_string($link,$transactionAmountCurrency)
+);
+return $sql;
+} //getQuery
+
 function insertNewUser($newUserName, $password, $firstName, $lastName, $email, $primaryNetworkID,$primaryNetworkName,$link) {
    global $LOG;
 //define insert sql  into go_user
@@ -197,11 +179,6 @@ function insertNewUser($newUserName, $password, $firstName, $lastName, $email, $
    } else {
       mydie("Error obtaining new userID");
    }
-   
-//insert UserBank Record - added JHM 11/7/2010
-   $userBank = new UserBank();
-   $userBank->insertUserBank($userID);
-
    return $userID;
 } //insertNewUser
 

@@ -17,6 +17,9 @@ ob_start();
       function inviteGame will be dev coded to automatically add Jittr employees to invite List 
       in go_GameInviteDetail
       This will be removed and will be under user control towards the end of the development cycle
+   Modified: JHM October 15,2010
+      added invites parameter which is a space delimited string of betsquared UserIDs which are being invited to the bet.
+      Will remove the current hardcoded friends invite to game with the ids passed in the "invites" parameter
 
    TODO - add twitter direct tweet
    TODO - add twitter tweet to user list
@@ -67,11 +70,13 @@ $wagerType=$_REQUEST['wagertype'];
 $wagerUnits=$_REQUEST['wagerunits'];
 $pivotDate = $_REQUEST['pivotdate'];
 $pivotCondition = $_REQUEST['pivotcondition'];
+$gameInvitees = $_REQUEST['invitees'];
 
 /* if publicGameID is not empty , instantiate  publicGame Record */
 if (!empty($publicGameID)) {
   $publicGameSettings = new GoPublicGame($publicGameID);
    $leagueName = $publicGameSettings->getLeagueName();
+   $leagueID = $publicGameSettings->getLeagueID();
    if (empty($eventName)) $eventName = $publicGameSettings->getEventName();
    if (empty($sport)) {
        $sport = $publicGameSettings->getSportID();
@@ -136,7 +141,7 @@ $syndicationUrl = "";
 $userSettings = new goUserSettings($createdByUserID); //grab user who created this wager - will need properties for syndication including oauth credentials
 
 header("Content-Type: text/xml");
-echo '<?xml version="1.0" encoding="UTF-8"?>';
+echo '<?xml version="1.0"?>';
 
 $link = mysqli_connect(Config::getDatabaseServer(),Config::getDatabaseUser(), Config::getDatabasePassword(),Config::getDatabase());
 if (!$link)
@@ -155,19 +160,19 @@ if (empty($subscriptionClose)) {
    if ($subscriptionCloseObj) $subscriptionClose=$subscriptionCloseObj->format("Y-m-d h:i:s");
 }
 //grab the shortened subscription url for the wager.
-$rc = Utility::shortenUrl("http://jittr.com/jittr/gameon/gogame.php/" . urlencode("?gameid=" . $gameID . "&createdbyuserid=" . $createdByUserID));
-if (Config::getDebug()) $LOG->log("status code " . $rc->status_code,PEAR_LOG_INFO);
-if ($rc->status_code == 200) {
-    $syndicationUrl= $rc->data->url;
-}
-$sql=sprintf("insert into go_games (gameID,publicGameID,createdByUserID,createdByUserName,title,eventName,date,description,type,typeName,pivotDate,pivotCondition,sportID,sportName,leagueName,closeDateTime,expirationDateTime,syndicationUrl,wagerType,wagerUnits) values ('%s','%u','%u','%s','%s','%s','%s','%s','%u','%s','%s','%s','%s','%s','%s','%s','%s','%s','%s','%u')",
+//$rc = Utility::shortenUrl("http://jittr.com/jittr/gameon/gogame.php/" . urlencode("?gameid=" . $gameID . "&createdbyuserid=" . $createdByUserID));
+//if (Config::getDebug()) $LOG->log("status code " . $rc->status_code,PEAR_LOG_INFO);
+//if ($rc->status_code == 200) {
+//    $syndicationUrl= $rc->data->url;
+//}
+$sql=sprintf("insert into go_games (gameID,publicGameID,createdByUserID,createdByUserName,title,eventName,date,description,type,typeName,pivotDate,pivotCondition,sportID,sportName,leagueID,leagueName,closeDateTime,expirationDateTime,syndicationUrl,wagerType,wagerUnits) values ('%s','%u','%u','%s','%s','%s','%s','%s','%u','%s','%s','%s','%s','%s','%s','%u','%s','%s','%s','%s','%u')",
         mysqli_real_escape_string($link,$gameID),
         mysqli_real_escape_string($link,$publicGameID),
         mysqli_real_escape_string($link,$createdByUserID),
         mysqli_real_escape_string($link,$createdByUserName),
         mysqli_real_escape_string($link,$title),
         mysqli_real_escape_string($link,$eventName),
-        mysqli_real_escape_string($link,$date),
+        mysqli_real_escape_string($link,$eventDateTime),
         mysqli_real_escape_string($link,$description),
         mysqli_real_escape_string($link,$type),
         mysqli_real_escape_string($link,$typeName),
@@ -175,6 +180,7 @@ $sql=sprintf("insert into go_games (gameID,publicGameID,createdByUserID,createdB
         mysqli_real_escape_string($link,$pivotCondition),
         mysqli_real_escape_string($link,$sport),
         mysqli_real_escape_string($link,$sportName),
+        mysqli_real_escape_string($link,$leagueID),
         mysqli_real_escape_string($link,$leagueName),
         mysqli_real_escape_string($link,$subscriptionClose),
         mysqli_real_escape_string($link,$expirationDateTime),
@@ -203,7 +209,7 @@ if (!$rc) {
    mydie(mysqli_error($link),500,$link);
 }
 
-insertGameInvites($link,$gameID,$gameInviteKey,$createdByUserID,$createdByUserName);
+insertGameInvites($link,$gameID,$gameInviteKey,$subscriptionClose,$createdByUserID,$createdByUserName,$gameInvitees);
 
 //Twitter syndication
 $twitter = new EpiTwitter(Config::getTwitterConsumerKey(),Config::getTwitterConsumerKeySecret(), $userSettings->getTwitterOAuthToken(), $userSettings->getTwitterOAuthTokenSecret());
@@ -223,8 +229,9 @@ ob_end_flush();
 
 exit;
 /* insert gameInvites into go_gameInvite table
+*  the gameInvites input parameter contains a space delimited string of betsquared userIDs invited to the game
 */
-function insertGameInvites($link,$gameID, $inviteKey, $createdByUserID, $createdByUserName) {
+function insertGameInvites($link,$gameID, $inviteKey, $closeDateTime,$createdByUserID, $createdByUserName, $gameInvitees) {
   global $LOG;
   $sql=sprintf("insert into go_gameInvite (gameID,inviteKey) values ('%s','%s')",
         mysqli_real_escape_string($link,$gameID),
@@ -239,13 +246,20 @@ function insertGameInvites($link,$gameID, $inviteKey, $createdByUserID, $created
   } //if
 //TODO - Remove temporary automatic insert into invite Detail
 
-  $sql = sprintf("insert into go_gameInviteDetail (gameID, inviteKey, createdByUserID,createdByUserName, inviteeUserID) select '%s','%s','%u','%s',userID from go_user where userID in (110,111,112)",
+  $gameInviteesArray = explode(" ", trim($gameInvitees));
+  $count = count($gameInviteesArray);
+  for ($x=0; $x < $count; $x++) {
+     $inviteeUserID = $gameInviteesArray[$x];
+     $sql = sprintf("insert into go_gameInviteDetail (gameID, inviteKey, createdByUserID,createdByUserName, closeDateTime,inviteeUserID) values ('%s','%s','%u','%s','%s','%u')",
         mysqli_real_escape_string($link,$gameID),
         mysqli_real_escape_string($link,$inviteKey),
         mysqli_real_escape_string($link,$createdByUserID),
-        mysqli_real_escape_string($link,$createdByUserName));
-  if (Config::getDebug()) $LOG->log("$sql",PEAR_LOG_INFO);
-  $rc = mysqli_query($link,$sql); 
+        mysqli_real_escape_string($link,$createdByUserName),
+        mysqli_real_escape_string($link,$closeDateTime),
+        mysqli_real_escape_string($link,$inviteeUserID));
+     if (Config::getDebug()) $LOG->log("$sql",PEAR_LOG_INFO);
+     $rc = mysqli_query($link,$sql); 
+   } //for
  
 } // insert GameInvites
 

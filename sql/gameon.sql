@@ -57,6 +57,20 @@ insert into go_user (userName,privacy, bankBalance) values ('jittrjohn',false, 1
 //
 insert into go_user (userName,privacy, bankBalance) values ('jittrralph',false, 10000)
 //
+/* go_user_search
+   date: October 19,2010
+   ISAM searchable table of betsquare users
+*/
+drop table if exists go_user_search
+//
+create table go_user_search (
+   userID integer not null,
+   body text,
+   PRIMARY KEY(userID),
+   FULLTEXT(body)
+)
+ENGINE=MYISAM
+//
 /* go_userFriends
    table of betsquared friends
    created by Julio Hernandez-Miyares
@@ -92,6 +106,12 @@ ENGINE=INNODB
     invitetorUserID, inviteeUserName , inviteNetwork together guarantte uniqueness
     use field inviteorUserID to get all the invites an individual user has outstanding
     use field inviteeBSUserID to get all the invites user has  received
+    inviteStatusID values
+              1 = created
+              2 = invite communicated
+              3-5 (for future)
+              6 = declined
+              7 = approved
 */
 drop table if exist go_friendInvites
 //
@@ -99,6 +119,7 @@ create table go_friendInvites (
       invitetorUserID integer not null,
       inviteeBSUserID integer not null default 0,
       inviteeUserName varchar(100) not null, 
+      inviteStatusID integer not null default 1,
       inviteStatus varchar(25) not null default 'Created',
       inviteNetworkID int not null default 0,
       inviteNetworkName varchar(50) null,
@@ -177,15 +198,20 @@ insert into go_userSettings (userID) values (1);
    The considerationID is a lookup to the consideration Units 
    for convenience, will also store the name of the consideration
 
+   October 25,2010 - for initial req, believe I can get away from having two tables to manage the
+   activity rewards.
+rewardType can be percentage of something or absolute points 
 */
 drop table if exists go_activityRewards
 //
 create table go_activityRewards (
    activityID integer not null AUTO_INCREMENT,
    activityName varchar(50) not null,
-   considerationID integer not null,
+   rewardType varchar(25) not null default 'absolute',
+   considerationID integer not null default 0,
    considerationName varchar(50) not null,
    amount    decimal(7,2) not null default 0,
+   percentage decimal(2,2) not null default 0,
    createdDate timestamp not null default current_timestamp(),
    modifiedDate timestamp null,
    PRIMARY KEY(activityID),  
@@ -193,6 +219,10 @@ create table go_activityRewards (
 )
 ENGINE INNODB
 //	
+insert into go_activityRewards (activityName,considerationName,amount) values ('checkin','',100)
+//
+insert into go_activityRewards (activityName,considerationName,amount) values ('register','',5000)
+//
 /* go_ConsiderationConversion
 */
 drop table if exists go_considerationConversion
@@ -242,20 +272,26 @@ ENGINE INNODB
          closed - event underlying the bet has occurred, winner determined and funds reconciled
          cancelled - bet has been cancelled
          disputed - results of event are disputed    
+      modified: by Julio Hernandez-Miyares on October 25,2010
+      to handle transactions to manage ducketts balance
 */
 drop table if exists go_userBankDetail
 //
 create table go_userBankDetail (
    userID int not null,
-   gameID int not null,
-   transactionID int not null AUTO_INCREMENT,
+   gameID int not null default 0,
+   bs_transactionID int not null AUTO_INCREMENT,
+   transactionID varchar(50) null  ,
+   transactionTypeID int not null default 1 ,
+   transactionTypeName varchar(25) not null default 'wager',
+   transactionAmount decimal(8,2) not null default 0,
    wagerTypeID int not null default 0,
    wagerType varchar(25) null,
    wagerStatusID int not null default 0,
    wagerStatus varchar(25) null,
    createdDate timestamp not null default current_timestamp(),
    modifiedDate timestamp null,
-   PRIMARY KEY(transactionID)  
+   PRIMARY KEY(bs_transactionID)  
 )
 ENGINE INNODB
 //
@@ -306,6 +342,7 @@ create table go_games (
    pivotCondition varchar(10) null,
    sportID int not null default 0,
    sportName varchar(50) null,
+   leagueID int null default 0,
    leagueName varchar(50) null,
    numberSubscribed int not null default 0,
    closeDateTime datetime not null default '0000-00-00 00:00:00', 
@@ -395,7 +432,10 @@ ENGINE INNODB
    created by Julio Hernandez-Miyares
    date: September 2,2010
    A record for each explicit invite for a bet
-   
+   Added inviteeUserName - denormalization
+   added go_inviteStatusName (denorm and visually understand the state), changed to inviteStatusID as it is an id and
+   reset default to 1 (created) which is inline wirg friend invite constants/states
+   added closeDatetime which will match what is in go_games. This is the date/time one can accept the bet till.
 */
 drop table if exists go_gameInviteDetail
 //
@@ -405,7 +445,10 @@ create table go_gameInviteDetail (
    createdByUserID integer not null,
    createdByUserName varchar(50) not null,
    inviteeUserID integer not null,
-   inviteStatus integer not null default 0,
+   inviteeUserName varchar(50)  null,
+   inviteStatusID integer not null default 1,
+   inviteStatusName varchar(25) not null default 'created',
+   closeDateTime  datetime not null default '0000-00-00 00:00:00' , 
    createdDate timestamp not null default current_timestamp(),
    modifiedDate timestamp null,
    PRIMARY KEY( gameID, createdByUserID,inviteeUserID )  
@@ -658,6 +701,22 @@ create table go_typeRules (
    createdDate timestamp not null default current_timestamp(),
    PRIMARY KEY(id),
    UNIQUE INDEX(typeName)
+)
+ ENGINE=INNODB
+//
+/* table to hold the bonus rules for activities
+   author: Julio Hernandez-Miyares
+   date: October 25,2010
+*/
+drop table if exists go_bonusRules_lu
+//
+create table go_bonusRules_lu (
+   bonusName varchar(25) not null,
+   activityReward
+   rewardType
+   modifiedDate timestamp null,
+   createdDate timestamp not null default current_timestamp(),
+   PRIMARY KEY(bonusName)
 )
  ENGINE=INNODB
 //

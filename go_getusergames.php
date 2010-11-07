@@ -9,6 +9,9 @@ ob_start();
            August 17,2010
            added sort query parameter 
            sorts results 
+   Update: By Julio Hernandez-Miyares
+           add query for all games - initiated and subscribed
+           change default operation to All 
    TODO: initially only retrieve those defined by userid, add those not created by userid but subscribed 
    TODO: implement retrieval by various filters
               sport, leauge , date
@@ -55,6 +58,7 @@ if (!isset($userID)) {
    mydie("paramaters not complete");
 }
 if (!$query) $query="created";
+$query='all';
 
 $link = mysqli_connect(Config::getDatabaseServer(),Config::getDatabaseUser(), Config::getDatabasePassword(),Config::getDatabase());
 if (!$link)
@@ -67,9 +71,11 @@ if ($query == "created")
    $sql = sprintf("select * from go_games where createdByUserID='%u'",mysqli_real_escape_string($link,$userID));
 else if ($query == "subscribed")
    $sql = sprintf("select g.* from go_games g, go_gamesSubscribers s where s.userID='%u' and s.gameID = g.gameID",mysqli_real_escape_string($link,$userID));
-else
-    mydie("invalid query - $query");
-
+else if ($query == 'all' ) {
+   $sql = sprintf("select g.* from go_games g where gameID in (select gameID from go_gamesSubscribers where userID='%u' union select gameID from go_gameSubscribers_Team where userID='%u')",
+        mysqli_real_escape_string($link,$userID),
+         mysqli_real_escape_string($link,$userID));
+} //if
 // Sorting if set from query parameter 
 if (!empty($querySort)) {
    if ('recent' == strtolower($querySort))
@@ -92,6 +98,7 @@ echo '<?xml version="1.0"?>';
 Utility::emitXML("",'games',0);
 Utility::emitXML("200",'status_code');
 Utility::emitXML("Ok",'status_message');
+Utility::emitXML("$userID",'userid');
 Utility::emitXML("$numberOfGames",'numberofgames');
 $recordsEmitted=0;
 while( $row = mysqli_fetch_assoc($cursor) )  {

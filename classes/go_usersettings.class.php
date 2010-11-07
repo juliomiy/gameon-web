@@ -11,6 +11,13 @@ require_once('goutility.class.php');
    Purpose: class object for userSettings 
    Modified: by Julio Hernandez-Miyares
    Date: August 24,2010 - added additional class properties
+   Modified: by Julio Hernandez-Miyares
+   Date: October 23,2010
+   dded ducketts bank balance information
+   Modified Julio Hernandez-Miyares
+   Date: October 27,2010
+   added statusCode and Status Message properties as well as setters/getters
+   not used or the moment as already returning via xml
 */
 class goUserSettings {
   private $userID;
@@ -33,10 +40,21 @@ class goUserSettings {
   private $facebookOAuthToken;
   private $facebookOAuthTokenSecret;
   private $facebookProfileImageUrl;
+/* ducketts bankbalance Information*/
+  private $duckettBankBalanceAvailable;
+  private $duckettsInPlay;
+  private $duckettOverdraftLimit;
+  private $duckettOverdraftAvailable;
+//end aggregated duketts balance information
   private $LOG;
   private $outputFlag;
   private $lastCode;
   private $lastMessage;
+  private $statusCode;
+  private $statusMessage;
+
+  private $primaryNetworkID;
+  private $primaryNetworkName;
 
   public function __construct() {
        $this->LOG = Config::getLogObject();
@@ -59,6 +77,57 @@ class goUserSettings {
          }
        }//if
   } //constructor
+
+public function setStatusCode($in) {
+    $this->statusCode = $in;
+    $this->lastCode = $in;
+}
+public function getStatusCode() {
+    return $this->lastCode;
+}
+public function setStatusMessage($in) {
+    $this->statusMessage = $in;
+    $this->lastMessage = $in;
+}
+public function getStatusMessage() {
+    return $this->lastMessage;
+}
+public function setPrimaryNetworkID($in) {
+    $this->primaryNetworkID = $in;
+}
+public function getPrimaryNetworkID() {
+    return $this->primaryNetworkID ;
+}
+public function setPrimaryNetworkName($in) {
+    $this->primaryNetworkName = $in;
+}
+public function getPrimaryNetworkName() {
+    return $this->primaryNetworkName ;
+}
+public function getDuckettBankBalanceAvailable() {
+   return  (is_numeric($this->duckettBankBalanceAvailable)) ? $this->duckettBankBalanceAvailable : 0;
+}
+public function setDuckettBankBalanceAvailable($in) {
+   $this->duckettBankBalanceAvailable = $in;
+}
+public function getDuckettsInPlay() {
+  return (is_numeric($this->duckettsInPlay)) ? $this->duckettsInPlay : 0;
+}
+public function setDuckettsInPlay($in) {
+  $this->duckettsInPlay = $in;
+}
+public function getDuckettOverDraftLimit() {
+  return (is_numeric($this->duckettOverdraftLimit)) ? $this->duckettOverdraftLimit : 0;
+}
+public function setDuckettOverDraftLimit($in) {
+  $this->duckettOverdraftLimit = $in;
+}
+public function getDuckettOverDraftAvailable() {
+  return (is_numeric($this->duckettOverdraftAvailable)) ? $this->duckettOverdraftAvailable : 0;
+}
+public function setDuckettOverDraftAvailable($in) {
+  $this->duckettOverdraftAvailable = $in;
+}
 
 /* determines the type of output returned by _toString. currently one supported is xml
 */
@@ -288,7 +357,7 @@ class goUserSettings {
      if (!$link) $this-mydie("Error connecting to Database");
        
      if (empty($isName)) //retrieve by userID
-        $sql=sprintf("select g.*,s.* from go_user g, go_userSettings s where g.userID='%s' and g.userID=s.userID ",mysqli_real_escape_string($link,$user));
+        $sql=sprintf("select g.*,s.*,b.bankBalance as duckettBankBalanceAvailable ,b.overDraftLine as duckettOverDraftLimit, b.overDraftLineUsed as duckettOverDraftLineAvailable, b.currentInPlayWagers as duckettsInPlay from go_user g LEFT JOIN  go_userSettings s on g.userID=s.userID LEFT JOIN go_userBank b on b.userID=g.userID  where g.userID='%u'",mysqli_real_escape_string($link,$user));
      else  //retrieve by userName
         $sql=sprintf("select g.*,s.* from go_user g, go_userSettings s where g.userName='%s' and g.userID=s.userID ",mysqli_real_escape_string($link,$user));
   
@@ -298,6 +367,8 @@ class goUserSettings {
      $row = mysqli_fetch_assoc($cursor);
      if ($row) {
         $this->setUserID($row['userID']); 
+        $this->setPrimaryNetworkID($row['primaryNetworkID']);
+        $this->setPrimaryNetworkName($row['primaryNetworkName']);
         $this->setUserName($row['userName']); 
         $this->setFirstName($row['firstName']); 
         $this->setLastName($row['lastName']); 
@@ -317,6 +388,11 @@ class goUserSettings {
 	$this->setFacebookOAuthToken($row['facebookOAuthToken']);
 	$this->setFacebookOAuthTokenSecret($row['facebookOAuthTokenSecret']);
 	$this->setFacebookProfileImageUrl($row['facebookImageUrl']);
+//duckett balance fields
+	$this->setDuckettBankBalanceAvailable($row['duckettBankBalanceAvailable']);
+	$this->setDuckettsInPlay($row['duckettsInPlay']);
+	$this->setDuckettOverDraftLimit($row['duckettOverDraftLimit']);
+	$this->setDuckettOverDraftAvailable($row['duckettOverDraftAvailable']);
         $rv = true;
      }
 
@@ -403,6 +479,8 @@ class goUserSettings {
      $xml .=Utility::emitXML($this->getLastCode(),"status_code");
      $xml .=Utility::emitXML($this->getLastMessage(),"status_message");
      $xml .=Utility::emitXML($this->getUserID(),"userid");
+     $xml .=Utility::emitXML($this->getPrimaryNetworkID(),"primarynetworkid");
+     $xml .=Utility::emitXML($this->getPrimaryNetworkName(),"primarynetworkname");
      $xml .=Utility::emitXML($this->getUserName(),"username");
      $xml .=Utility::emitXML($this->getFirstName(),"firstname");
      $xml .=Utility::emitXML($this->getLastName(),"lastname");
@@ -419,6 +497,13 @@ class goUserSettings {
      $xml .= Utility::emitXML($this->getTwitterDefault(),"twitterdefault");
      $xml .= Utility::emitXML($this->getFoursquareDefault(),"foursquaredefault");
      $xml .= Utility::emitXML("","defaultsettings",0);
+
+     $xml .= Utility::emitXML("","banksettings",0);
+     $xml .= Utility::emitXML($this->getDuckettBankBalanceAvailable(),"duckettbankbalanceavailable");
+     $xml .= Utility::emitXML($this->getDuckettsInPlay(),"duckettsinplay");
+     $xml .= Utility::emitXML($this->getDuckettOverDraftLimit(),"duckettoverdraftlimit");
+     $xml .= Utility::emitXML($this->getDuckettOverDraftAvailable(),"duckettoverdraftavailable");
+     $xml .= Utility::emitXML("","banksettings",0);
 
      $xml .=Utility::emitXML("","usersettings",0);
      return $xml;

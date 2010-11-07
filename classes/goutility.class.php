@@ -106,5 +106,63 @@ public static function getTeamIDbyTeamName($teamName) {
    return $teamID;
 }  //getTeamIDbyTeamName
 
+
+public static function getUserIDOrName($param,$type='id') {
+
+   $LOG = Config::getLogObject();
+   $link = mysqli_connect(Config::getDatabaseServer(),Config::getDatabaseUser(), Config::getDatabasePassword(),Config::getDatabase());
+   if (!$link)
+   {   
+      // Server error
+      mydie("Error connecting to Database");
+   }
+  if ($type=='id') {
+     $sql=sprintf("select * from go_user where userID='%u'",
+      mysqli_real_escape_string($link,$param));
+  } else {
+     $sql=sprintf("select * from go_user where userName='%s'",
+      mysqli_real_escape_string($link,$param));
+  }
+  if (Config::getDebug()) $LOG->log("$sql",PEAR_LOG_INFO);
+   $cursor = mysqli_query($link,$sql);
+   if (!$cursor) {
+      // Server error
+      mydie(mysqli_error($link),500,$link);
+   } //if
+   $row = mysqli_fetch_assoc($cursor);
+   if (isset($cursor)) $cursor->close();
+   if (isset($link)) $link->close();
+   return ($type=='id' ? $row['userName'] : $row['userID']);
+} //getUserIDOrName
+
+public static function getTeamIDOrTeamName($param,$type='id') {
+   $LOG = Config::getLogObject();
+   $link = mysqli_connect(Config::getDatabaseServer(),Config::getDatabaseUser(), Config::getDatabasePassword(),Config::getDatabase());
+   if (!$link)
+   {   
+      // Server error
+      // mydie("Error connecting to Database");
+      return GAMEON_ERROR;
+   }
+  if ($type =='id') {
+     $sql=sprintf("select * from go_teams_lu where id='%u'",
+      mysqli_real_escape_string($link,$param));
+  } else {
+     $sql=sprintf("select * from go_teams_lu where teamName='%s'",
+      mysqli_real_escape_string($link,$param));
+  }
+  if (Config::getDebug()) $LOG->log("$sql",PEAR_LOG_INFO);
+  $cursor = mysqli_query($link,$sql);
+  if ($cursor) {
+        $row = mysqli_fetch_assoc($cursor);
+        $rv = GAMEON_OK . GAMEON_DELIMITER . ($type=='id' ?  'teamname' . GAMEON_DELIMITER . $row['teamName'] : 'teamid' . GAMEON_DELIMITER . $row['id']);
+  } else $rv = GAMEON_NORECORD;
+   if (isset($cursor)) $cursor->close();
+   if (isset($link)) $link->close();
+   return $rv;
+} //getTeamIDOrTeamName
+ 
 } //class Utility
+
+
 ?>

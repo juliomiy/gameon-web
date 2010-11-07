@@ -22,6 +22,11 @@ ob_start("callback");
    operations supported: invite users (operation= invite
    invitee accept/decline an invite operation=accept, operation=decline           
 Uses POST
+ 
+   uppaded: Julio Hernandez-Miyares
+   date: October 17,2010
+   implement approve/decline of invites
+
 
 Response
    <friend_invite>
@@ -49,13 +54,30 @@ require_once('goutility.class.php');
 
 $LOG=Config::getLogObject();
 
-$invitetorUserName=$_REQUEST['username'];
-$invitetorUserID=$_REQUEST['invitetoruserid'];
-$operation= strtolower($_REQUEST['operation']);
+$invitetorUserName=$_REQUEST['username']; // user doing the inviting 
+$invitetorUserID=$_REQUEST['invitetoruserid']; //userid doing the inviting
+$operation= strtolower($_REQUEST['operation']);  
+$socialNetworkName = $_REQUEST['socialnetworkname'];
+$socialNetworkID= $_REQUEST['socialnetworkid'];
 
-if (empty($operation) || strrpos("invite approve deny",$operation) === FALSE)  {
-    mydie("Parameter(s) missing");
+//added to implement invite approve/decline - will be passed along in the header part of the post if operation is approve/decline
+$inviteeBSUserID = $_REQUEST['inviteeuserid'];  
+$inviteeBSUserName = $_REQUEST['inviteeusername'];
+ 
+$errorMsg = null; //set to null, will test at end of block - if still null, passed test
+if (empty($operation) || strrpos("invite approve deny decline",$operation) === FALSE || empty($socialNetworkID))  {
+    $errorMsg = "Operation Parameter  missing ";
 }  //if
+// confirm parameters are passed depending on the operation requested
+if ($operation =='invite') {
+   $errorMsg .= (empty($invitetorUserID)) ? "invitetorUserID missing " : null;
+} else {
+   $errorMsg .= (empty($inviteeBSUserID)) ? "inviteeUserID missing " : null;
+}  //if
+//if (isset($errorMsg)) mydie($errorMsg);
+
+if (Config::getDebug()) $LOG->log($_REQUEST['invites'],PEAR_LOG_INFO);
+if (Config::getDebug()) $LOG->log($_SERVER['QUERY_STRING'],PEAR_LOG_INFO);
 
 $link = mysqli_connect(Config::getDatabaseServer(),Config::getDatabaseUser(), Config::getDatabasePassword(),Config::getDatabase());
 if (!$link)
@@ -72,15 +94,19 @@ Utility::emitXML("^STATUS_CODE",'status_code');
 Utility::emitXML("^STATUS_MESSAGE",'status_message');
 Utility::emitXML("^NUMBEROFINVITES",'numberofinvites');
 
-$invitesArr = explode('^',$_REQUEST['invites']);
+$invitesArr = explode('^',$_REQUEST['invites']); //invites records are separated by ^ (caret)
 $noOfInvites = count($invitesArr);
+
 $failureCount=0;
 $successCount=0;
 for ($index=0; $index < $noOfInvites; $index++) {
    $params=null;  //for safety's sake
-   $params['invitetoruserid'] = $invitetorUserID;
-   $params['socialnetworkname'] = 'BET_SQUARED';
-   $params['socialnetworkid'] = 4;
+   if ($operation =='invite') // header parm is the user Inviting
+      $params['invitetoruserid'] = $invitetorUserID;
+   else       //header parm is the person invited
+      $params['inviteebsuserid'] = $inviteeBSUserID;
+   $params['socialnetworkname'] = $socialNetworkName;
+   $params['socialnetworkid'] = $socialNetworkID;
    $params['operation'] = $operation;
    $inviteArr = explode('|',$invitesArr[$index]);
 
@@ -109,6 +135,9 @@ for ($index=0; $index < $noOfInvites; $index++) {
    } //else
 
    Utility::emitXML("$statusMessage",'status_message');
+   Utility::emitXML($params['inviteeusername'],'username');
+   Utility::emitXML("$socialNetworkName",'socialnetworkname');
+   Utility::emitXML("$socialNetworkID",'socialnetworkid');
    Utility::emitXML("",'invite',0);
 } //for
 Utility::emitXML("",'friend_invite',0);
@@ -137,7 +166,17 @@ function getQuery($params,$link) {
              mysqli_real_escape_string($link,$socialNetworkID),
              mysqli_real_escape_string($link,$socialNetworkName));
    } else if ($operation =='approve') {
-         $sql = sprintf("insert into go_userFriends (userID, friendUserID, values ()");    
+         $sql = sprintf("insert into go_userFriends (userID, friendUserID, friendUserName, friendName) select '%u',u.userID, u.userName,u.name from go_user u  where u.userID = '%u';update go_friendInvites set inviteStatus='approved' , inviteStatusID='%u' where invitetorUserID='%u' and inviteeBSUserID='%u'",
+             mysqli_real_escape_string($link,$invitetorUserID),
+             mysqli_real_escape_string($link,$inviteeBSUserID),
+             mysqli_real_escape_string($link,FRIEND_INVITE_APPROVED),
+             mysqli_real_escape_string($link,$invitetorUserID),
+             mysqli_real_escape_string($link,$inviteeBSUserID));
+   } else if ($operation =='decline' ) {
+         $sql = sprintf("update go_friendInvites set inviteStatus='decline' ,inviteStatusID = '%u' where invitetorUserID='%u' and inviteeBSUserID='%u'",
+             mysqli_real_escape_string($link,FRIEND_INVITE_DECLINED),
+             mysqli_real_escape_string($link,$invitetorUserID),
+             mysqli_real_escape_string($link,$inviteeBSUserID));
    } //else
    return $sql;
 } //getQuery

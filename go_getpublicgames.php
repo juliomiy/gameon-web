@@ -58,6 +58,7 @@ $recordsEmitted=0;
 while( $row = mysqli_fetch_assoc($cursor) )  {
    $recordsEmitted++;
    $gameID = $row['gameID'];
+   $publicGameID = $row['gameID'];  //added JHM 11/7/2010 - set publicGameID Element 
    $combatants =  getGameCombatants($link,$gameID);
    $homeTeamID = $combatants['homeTeam'];
    $visitingTeamID = $combatants['visitingTeam'];
@@ -69,6 +70,7 @@ while( $row = mysqli_fetch_assoc($cursor) )  {
    $longitude= $lookupHash[$homeTeamID]['longitude'];
    Utility::emitXML("",'game',0);
    Utility::emitXML($gameID,'gameid');
+   Utility::emitXML($publicGameID,'publicgameid'); //added JHM 11/7/2010 - add publicGameID element
    Utility::emitXML($row['sportName'],'sportname');
    Utility::emitXML($row['leagueName'],'leaguename');
    Utility::emitXML($row['seasonWeek'],'seasonweek');
@@ -161,7 +163,9 @@ function getQuery($params,$lookup) {
         $endDate = date('Y-m-d G:i:s',$endDateEpoch);
        // $endDate="2010-09-01 23:59:59";
         $where .= (!empty($where) ? "and" : " where " ) . "  date between '$today' and '$endDate' ";
-   } //if
+   } else {
+        $where .= (!empty($where)) ? " and date > now()" : " where date > now() ";
+   }//if
    $basesql = "select * from go_publicgames g "; 
    $sql = $basesql . $where;
    if (Config::getDebug()) $LOG->log($sql,PEAR_DEBUG);

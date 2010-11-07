@@ -15,8 +15,11 @@ require_once('go_usersettings.class.php');
    TODO: update toXML return to include new fields added August 19,2010
    Modified: by Julio Hernandez-Miyares August 19,2010
     add additional fields for public Games
+   TODO - remove Die statements - use statusCode/Message to return state information. Calling die will kill the script wrapping the call to this class
 */
 class goPublicGame {
+   private $statusCode;
+   private $statusMessage;
    private $gameID;
    private $title;
    private $description;
@@ -31,6 +34,7 @@ class goPublicGame {
    private $typeID;
    private $type;
    private $sportID;
+   private $leagueID;
    private $leagueName;
    private $sport;
    private $favorite;
@@ -47,6 +51,19 @@ class goPublicGame {
        } //if
    } //constructor    
 
+     public function setStatusCode($in) {
+           $this->statusCode = $in;
+     }
+
+     public function getStatusCode() {
+           return $this->statusCode ;
+     }
+     public function setStatusMessage($in) {
+           $this->statusMessage = $in;
+     }
+     public function getStatusMessage() {
+           return $this->statusMessage;
+     }
    /* determines the type of output returned by _toString. currently one supported is xml
    */
      public function setOutputFlag($in) {
@@ -127,6 +144,12 @@ class goPublicGame {
       $this->leagueName=$in;
    }
 
+   public function getLeagueID() {
+      return $this->leagueID;
+   }
+   public function setLeagueID($in) {
+      $this->leagueID =  (is_numeric($in) ? $in : 0);
+   }
    public function getFavorite() {
       return $this->favorite;
    }
@@ -196,6 +219,7 @@ class goPublicGame {
       $this->setSportID($row['id']);
       $this->setSportName($row['sportName']);
       $this->setLeagueName($row['leagueName']);
+      $this->setLeagueID($row['leagueID']);
       $this->setFavorite($row['favorite']);
       $this->setTypeID($row['type']);
       $this->setTypeName($row['typeName']);
@@ -204,6 +228,10 @@ class goPublicGame {
       if (empty($this->eventName)) $this->setEventName($this->getTitle());
       if (empty($this->description)) $this->setDescription($this->getTitle());
       $rc = $this->getPublicGameCombatants($gameID,$link);
+      if ($rc) {
+           $this->setStatusCode("200");
+           $this->setStatusMessage("Ok");
+      }
       return $rc;
    }
 
@@ -257,6 +285,7 @@ class goPublicGame {
      $xml .=Utility::emitXML($this->getTypeName(),"type");
      $xml .=Utility::emitXML($this->getSportName(),"sport");
      $xml .=Utility::emitXML($this->getLeagueName(),"league");
+     $xml .=Utility::emitXML($this->getLeagueID(),"leagueid");
      $xml .=Utility::emitXML($this->getFavorite(),"favorite");
      $xml .=Utility::emitXML($this->getNumberofSubscribers(),"numbersubscribers");
      $xml .=Utility::emitXML("","publicgame",0);

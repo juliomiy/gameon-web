@@ -1,7 +1,6 @@
 <?php
 ob_start();
 /*
-
    Author: Julio Hernandez-Miyares
    Date: September 2,2010
    Purpose:
@@ -39,8 +38,16 @@ $LOG=Config::getLogObject();
 
 //only userid is mandatory
 $userID = $_REQUEST['userid'];
+$userName = $_REQUEST['username'];
 $sportID= $_REQUEST['sportid'];
+$sort = $_REQUEST['sort'];
 
+if (empty($userID)  && !empty($userName)) {
+    $userID = Utility::getUserIDOrName($userName,'username');
+} else 
+if (!empty($userID)  && empty($userName)) {
+    $userName = Utility::getUserIDOrName($userID,'id');
+}
 if (empty($userID)) {
    mydie("Incomplete Parameters",500);
 } //if
@@ -69,6 +76,8 @@ echo '<?xml version="1.0" encoding="UTF-8"?>';
 Utility::emitXML("",'game_invites',0);
 Utility::emitXML('200','status_code');
 Utility::emitXML('Ok','status_message');
+Utility::emitXML("$userID",'userID');
+Utility::emitXML("$userName",'username');
 Utility::emitXML($cursor->num_rows,'openinvites');
 $recordsEmitted=0;
 
@@ -84,6 +93,11 @@ while( $row = mysqli_fetch_assoc($cursor) )  {
    Utility::emitXML($row['closeDateTime'],"closedatetime");
    Utility::emitXML($row['wagerType'],"wagertype");
    Utility::emitXML($row['wagerUnits'],"wagerunits");
+   Utility::emitXML($row['type'],"type");
+   Utility::emitXML($row['sportID'],"sportid");
+   Utility::emitXML($row['sportName'],"sportname");
+   Utility::emitXML($row['leagueID'],"leagueid");
+   Utility::emitXML($row['leagueName'],"leaguename");
    Utility::emitXML("",'gameinvite',0);
 } //while
 $cursor->close();
@@ -93,9 +107,10 @@ exit;
 
 // returns a sql statement to execute
 function getQuery($link,$userID) {
- $sql = sprintf("select i.gameID, i.inviteKey, i.createdByUserID , i.createdByUserName, g.eventName, g.numberSubscribed, g.date as eventDateTime, g.closeDateTime,g.wagerUnits,g.wagerType  from go_gameInviteDetail i join go_games g on i.gameID = g.gameID  where i.inviteeUserID='%u'",
+ $sql = sprintf("select i.gameID, i.inviteKey, i.createdByUserID , i.createdByUserName, g.eventName, g.numberSubscribed, g.date as eventDateTime, g.closeDateTime,g.wagerUnits,g.wagerType , g.type, g.sportID,g.sportName, g.leagueID, g.leagueName from go_gameInviteDetail i join go_games g on i.gameID = g.gameID  where i.inviteeUserID='%u' and i.inviteStatusID not in (" . FRIEND_INVITE_DECLINED . "," .  FRIEND_INVITE_APPROVED . ")  and i.closeDateTime > now()",
            mysqli_real_escape_string($link,$userID));
- return $sql;
+$sql .=(empty($sort) ? " order by i.closeDateTime asc" : " order by i.closeDateTime $sort");
+return $sql;
 } //getQuery
 
 //mydie function in case of critical error

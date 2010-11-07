@@ -6,6 +6,9 @@ ob_start();
       if operation = friends
       if operation = invites will instead
       retrieve open invites from go_inviteDetails
+   modified October 19,2010 by Julio H Miyares
+   added search betsquare users feature 
+   currently searches will hit an isam version of go_users named go_users_search
 
 */
 include('.gobasicdefines.php');
@@ -33,6 +36,7 @@ if (!isset($userID)) {
 
 $params['userid'] = $userID;
 $params['operation'] = strtolower($operation);
+$params['query'] = $query;
 
 $link = mysqli_connect(Config::getDatabaseServer(),Config::getDatabaseUser(), Config::getDatabasePassword(),Config::getDatabase());
 if (!$link)
@@ -88,8 +92,17 @@ function getQuery($params, $link) {
               go_friendInvites i LEFT JOIN go_user u on i.inviteeBSUserID = u.userID";
       $where = " where i.invitetorUserID = '%u'";
   } else if ($operation == 'invitee') {  //get where I am being invited
-      $sql = "select i.invitetorUserID , u.userName as friendUserName, u.name as friendName, 'test.png' as friendImageUrl, 0 as numberOfBets from go_friendInvites i LEFT JOIN go_user u on i.invitetorUserID = u.userID ";
-      $where = " where i.inviteeBSUserID = '%u'";
+      $sql = "select i.invitetorUserID as friendUserID, u.userName as friendUserName, u.name as friendName, 'test.png' as friendImageUrl, 0 as numberOfBets from go_friendInvites i LEFT JOIN go_user u on i.invitetorUserID = u.userID ";
+      $where = " where i.inviteeBSUserID = '%u' and i.inviteStatusID not in (" . FRIEND_INVITE_DECLINED . ',' . FRIEND_INVITE_APPROVED . ")" ;
+  }  else if ($operation == 'search') {
+// select those betsquared users that match the query string and that are NOT already my friends
+      $sql ="select u.userID as friendUserID, u.userName as friendUserName, u.name as friendName, 'test.png' as friendImageUrl, 0 as numberOfBets from go_user u";
+     $where = "  where u.userID in (select userID from go_user_search where match(body) against ('%s')) and u.userID  not in (select friendUserID from go_userFriends f where f.userID = '%u')"; 
+     $sql = sprintf($sql . $where , 
+    mysqli_real_escape_string($link,$params['query']),
+    //mysqli_real_escape_string($link,$params['userid']),
+    mysqli_real_escape_string($link,$params['userid']));
+    return $sql;
   } //if
 
   
